@@ -16,6 +16,6 @@ module.exports = function (app) {
     });
 	
 	app.get('/setParameters', function (req, res) {
-        res.render('coclustering/chat', { title: 'Chat with Me!  ' })
+          res.render('account/account', { user: req.user });
     });
 }
