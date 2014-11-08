@@ -15,7 +15,7 @@ module.exports = function (app) {
         res.render('about', { title: 'About Me.  ' })
     });
 	
-	app.get('/chat2', function (req, res) {
+	app.get('/setParameters', function (req, res) {
         res.render('chat', { title: 'Chat with Me!  ' })
     });
 }
