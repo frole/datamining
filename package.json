@@ -12,6 +12,7 @@
     "nconf": "~0.6.7",
     "socket.io": "~0.9.13",
     "everyauth": "https://github.com/bnoguchi/everyauth/tarball/express3",
-    "recaptcha": "~1.2.0"
+    "recaptcha": "~1.2.0",
+	"csurf"  : "latest"
   }
 }
