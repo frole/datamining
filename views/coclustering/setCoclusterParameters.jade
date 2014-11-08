@@ -1,0 +1,17 @@
+
+
+h1 Coclustering a corpus
+
+form(name="input", action="/corpus/cocluster", method="get")
+      input(type='hidden', name='_csrf', value="#{csrf_token}")
+      p Corpus Name
+      input(type="text", name="corpus" , value="pubmed2")
+      p nbrowcluster
+      input(type="number", name="nbrowcluster")
+      p nbcolcluster
+      input(type="number", name="nbcolcluster")
+      br
+      input(type="submit", value="OK")
+  br
+
+  
