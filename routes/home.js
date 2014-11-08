@@ -16,6 +16,6 @@ module.exports = function (app) {
     });
 	
 	app.get('/setParameters', function (req, res) {
-          res.render('account/account', { user: req.user });
+          res.render('coclustering/account', { user: req.user });
     });
 }
