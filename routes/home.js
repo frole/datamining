@@ -16,6 +16,6 @@ module.exports = function (app) {
     });
 	
 	app.get('/setParameters', function (req, res) {
-        res.render('coclustering/setCoclusterParameters')
+        res.render('chat')
     });
 }
