@@ -1,0 +1,122 @@
+svg *::selection {
+         background : transparent;
+      }
+     
+      svg *::-moz-selection {
+         background:transparent;
+      } 
+     
+      svg *::-webkit-selection {
+         background:transparent;
+      }
+      rect.selection {
+        stroke          : #333;
+        stroke-dasharray: 4px;
+        stroke-opacity  : 0.5;
+        fill            : transparent;
+      }
+
+      rect.cell-border {
+        stroke: #eee;
+        stroke-width:0.3px;   
+      }
+
+      rect.cell-selected {
+        stroke: rgb(51,102,153);
+        stroke-width:0.5px;   
+      }
+
+      rect.cell-hover {
+        stroke: #F00;
+        stroke-width:0.3px;   
+      }
+
+      text.mono {
+        font-size: 9pt;
+        font-family: Consolas, courier;
+        fill: #aaa;
+      }
+
+      text.text-selected {
+        fill: #000;
+      }
+
+      text.text-highlight {
+        fill: #c00;
+      }
+      text.text-hover {
+        fill: #00C;
+      }
+      #tooltip {
+        position: absolute;
+        width: 200px;
+        height: auto;
+        padding: 10px;
+        background-color: white;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        border-radius: 10px;
+        -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+        -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+        box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+        pointer-events: none;
+      }
+
+      #tooltip.hidden {
+        display: none;
+      }
+
+      #tooltip p {
+        margin: 0;
+        font-family: sans-serif;
+        font-size: 12px;
+        line-height: 20px;
+      }
+	  
+#subbloc{
+        display: block;
+		width: 10px;
+		height: 10px;
+}
+
+#graphHolder{
+		width:200;
+		height: 500px;
+        border-width:2px;
+        border-style:solid;
+        border-color:black;
+}           
+
+#dialog-bloc{
+        display: block;
+		width: 700px;
+		height: 600px;
+		margin-left: auto;
+        margin-right: auto;
+}  
+#info{
+        display: inline-block;
+		width: 230px;
+		height: 500px;
+		margin-left: auto;
+        margin-right: auto;
+		vertical-align: top;
+}          
+
+#bipartite{
+        display: inline-block;
+        width: 700px;
+		height: 600px;
+		margin-left: auto;
+        margin-right: auto;
+}  
+
+ul {
+display: block;
+list-style-type: disc;
+-webkit-margin-before: 1em;
+-webkit-margin-after: 1em;
+-webkit-margin-start: 0px;
+-webkit-margin-end: 0px;
+-webkit-padding-start: 40px;
+}

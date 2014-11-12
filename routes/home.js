@@ -16,6 +16,9 @@ module.exports = function (app) {
     });
 	
 	app.get('/setParameters', function (req, res) {
-          res.render('coclustering/account', { user: req.user });
+          res.render('coclustering/setCoclusterParameters.jade');
+    });
+        app.get('/bipartiteRecom', function (req, res) {
+          res.render('coclustering/coclusteringBipartiteVisu.jade');
     });
 }
