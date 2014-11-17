@@ -281,6 +281,9 @@
     },
     "recaptcha": {
       "version": "1.2.0"
+    },
+    "azure": {
+      "version": "0.10.1"
     }
   }
 }
