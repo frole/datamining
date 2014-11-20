@@ -32,7 +32,7 @@ module.exports = function (app) {
 
       app.get('/test', function (req, res) {
           //res.render('test/test.jade');       
-          tests.storeFunction(req,res) ;
+          tests.storeFunction(req,res);
     });
 }
 
