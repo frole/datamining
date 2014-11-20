@@ -1,5 +1,7 @@
 module.exports = function (app) {
 
+    var tests = require('../controllers/test/storage')
+
     // home page
     app.get('/', function (req, res) {
         res.render('index', { title: 'Home Page.  ' })
@@ -27,4 +29,11 @@ module.exports = function (app) {
         app.get('/bipartiteDocsTerms', function (req, res) {
           res.render('coclustering/coclusteringBipartiteDocTermVisu.jade');
     });
+
+      app.get('/test', function (req, res) {
+          //res.render('test/test.jade');       
+          tests.storeFunction(req,res) 
+    });
 }
+
+
