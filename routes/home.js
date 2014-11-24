@@ -1,6 +1,7 @@
 module.exports = function (app) {
 
-    var tests = require('../controllers/test/storage')
+    var testStorage = require('../controllers/test/storage')
+    var testCommunications = require('../controllers/test/communications')
 
     // home page
     app.get('/', function (req, res) {
@@ -30,9 +31,14 @@ module.exports = function (app) {
           res.render('coclustering/coclusteringBipartiteDocTermVisu.jade');
     });
 
-      app.get('/test', function (req, res) {
+      app.get('/testStorage', function (req, res) {
           //res.render('test/test.jade');       
-          tests.storeFunction(req,res);
+          testStorage.storeFunction(req,res);
+    });
+  
+   app.get('/testCommunications', function (req, res) {
+          //res.render('test/test.jade');       
+          testCommunications.serviceBusFunction(req,res);
     });
 }
 
