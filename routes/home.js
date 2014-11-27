@@ -39,10 +39,16 @@ module.exports = function (app) {
           testStorage.storeFunction(req,res);
     });
   
-   app.get('/testCommunications', function (req, res) {
+      app.get('/testCommunications', function (req, res) {
           //res.render('test/test.jade');       
           testCommunications.serviceBusFunction(req,res);
     });
+
+   app.get('/testCommunications/ws', function (req, res) {
+          //res.render('test/test.jade');       
+          testCommunicationsWs.wsFunction(req,res);
+    });
+  
 }
 
 
