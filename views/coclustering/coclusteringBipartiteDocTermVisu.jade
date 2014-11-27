@@ -17,10 +17,12 @@ block content
     #info
     #bipartite
   script.
+    var biparti = !{graphe};
+    //alert(biparti.rowClusterProp);
     var sales_data=[["1","1",0.14],["2","2",0.18],["3","3",0.14]];
     var width = 700, height = 600, margin ={b:0, t:40, l:300, r:50};
     var svg = d3.select("#bipartite")
                 .append("svg").attr('width',width).attr('height',(height+margin.b+margin.t))
                 .append("g").attr("transform","translate("+ margin.l+","+margin.t+")");
-    var data = [{data:bP.partData(sales_data,2), id:'SalesAttempts', header:["Doc-Clusters","Term-Clusters", "Documents/Terms "]}];
+    var data = [{data:bP.partData(sales_data,2), id:'SalesAttempts', header:["Doc-Clusters","Term-Clusters", "Documents/Terms "],         rowClusterProp:biparti.rowClusterProp,colClusterProp:biparti.colClusterProp,rowClusterJob:biparti.rowClusterJob,colClusterGenre:biparti.colClusterGenre,rowClusterJobProp:biparti.rowClusterJobProp,colClusterGenreProp:biparti.colClusterGenreProp}];
     bP.draw(data, svg);

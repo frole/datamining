@@ -1,7 +1,7 @@
 module.exports = function (app) {
 
     var tests = require('../controllers/test/storage')
-
+    var corpus = require('../controllers/test/corpus')
     // home page
     app.get('/', function (req, res) {
         res.render('index', { title: 'Home Page.  ' })
@@ -27,7 +27,8 @@ module.exports = function (app) {
           res.render('coclustering/coclusteringBipartiteVisu.jade');
     });
         app.get('/bipartiteDocsTerms', function (req, res) {
-          res.render('coclustering/coclusteringBipartiteDocTermVisu.jade');
+           corpus.corpusCoclusterDocTerm(req,res); 
+          //res.render('coclustering/coclusteringBipartiteDocTermVisu.jade');
     });
 
       app.get('/test', function (req, res) {

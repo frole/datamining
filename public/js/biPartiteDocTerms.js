@@ -4,32 +4,8 @@
         var c1=[-180, 40], c2=[-100, 130], c3=[-10, 200];//Column positions of labels.
 	var colors =["#3366CC", "#DC3912",  "#FF9900","#109618", "#990099", "#0099C6"];
         var rowClusterJob = [["doc1","doc2","doc3"],["doc4","doc5","doc6"],["doc7","doc8","doc9"]];
-//var rowClusterProp = [217,140,195,172,125,94];
-//var colClusterProp = [98,48,138,80,972,204, 74,68];
 
-var rowClusterProp = [217,140,195];
-var colClusterProp = [98,138,80];
-
-        var colClusterGenreProp = [[{"scientific": 0.019,"weight": 0.017, "presence": 0.026,  "science": 0.022, "incidence": 0.029, "library": 0.0516, "transformation": 0.014, "libraries": 0.027, "rate":0.022, "book": 0.020, "mechanism": 0.014, "test": 0.014, "cases": 0.046, "document": 0.013, "retrieval": 0.0296}],[{"supersonic": 0.043, "layer":  
-0.056, "naca": 0.028, "flat": 0.0256, "shock": 0.030, "hypersonic": 0.026, "laminar": 0.035, "dimensional": 0.030, "pressure": 0.0387, "heat": 0.032, "velocity": 0.03977, "boundary": 0.0753, "equations": 0.031, "scs": 0.0527, "mach": 0.064}],[{"urinary": 0.014, "hormone": 0.02089, "rats": 0.0164, "renal": 0.0215, "cancer": 0.0162, "cells": 0.03095, "disease": 0.0191, "rat": 0.014, "cell": 0.01950, "patients": 0.032, "tissue": 0.015, "therapy": 0.01789, "liver": 0.0172, "serum": 0.017, "kidney": 0.015}]];
-
-        var rowClusterJobProp =[[{"scientific": 0.019,"weight": 0.017, "presence": 0.026,  "science": 0.022, "incidence": 0.029, "library": 0.0516, "transformation": 0.014, "libraries": 0.027, "rate":0.022, "book": 0.020, "mechanism": 0.014, "test": 0.014, "cases": 0.046, "document": 0.013, "retrieval": 0.0296}],[{"supersonic": 0.043, "layer":  
-0.056, "naca": 0.028, "flat": 0.0256, "shock": 0.030, "hypersonic": 0.026, "laminar": 0.035, "dimensional": 0.030, "pressure": 0.0387, "heat": 0.032, "velocity": 0.03977, "boundary": 0.0753, "equations": 0.031, "scs": 0.0527, "mach": 0.064}],[{"urinary": 0.014, "hormone": 0.02089, "rats": 0.0164, "renal": 0.0215, "cancer": 0.0162, "cells": 0.03095, "disease": 0.0191, "rat": 0.014, "cell": 0.01950, "patients": 0.032, "tissue": 0.015, "therapy": 0.01789, "liver": 0.0172, "serum": 0.017, "kidney": 0.015}]];
-
-
-//[["other","student","writer"],["student","programmer","other"],["student","engineer","administrator"],["educator","administrator","engineer"],["student","other","engineer"],["programmer","student","educator"],["student","educator","administrator"]];
-
-        var colClusterGenre = [["library","cases","retrieval"],["boundary","mach","layer"],["patients","cells","renal"]];
-//[["Action","Sci-Fi","Thriller"],["Drama","Thriller","Action"],["Drama","Comedy","Children"],["Drama","Comedy","Crime"],["Action","Adventure","Drama"],["Comedy","Drama","Romance"],["Drama","Comedy","Romance"],["Drama","Crime","Action"],["Drama","Comedy","Thriller"],["Drama","Action","Crime"]];
-
-/*var rowClusterJob = [["educator","administrator","librarian"],["student","other","educator"],["programmer","engineer","administrator"],["student","other","educator"],["student","programmer","other"]];
-var colClusterGenre = [["Comedy","Action","Animation"],["Action","Drama","Comedy"],["Comedy","Drama","Action"],["Drama","Comedy","War"],["Drama","Comedy","Thriller"],["Drama","Comedy","Romance"],["Drama","Action","Thriller"],["Drama","Action","Comedy"]];*/
-
-        var info = {};
         var jobgenre = ["Docs","Terms"];
-        info.labels = [rowClusterJob,colClusterGenre];
-        info.proportions = [rowClusterJobProp,colClusterGenreProp];
-        var prop = [rowClusterProp,colClusterProp];
 		
 		function bySortedValue(obj) {
     var tuples = [];
@@ -58,7 +34,7 @@ var colClusterGenre = [["Comedy","Action","Animation"],["Action","Drama","Comedy
 		return sData;
 	}
 	
-	function visualize(data){
+	function visualize(data,rowClusterProp,colClusterProp){
 		var vis ={};
 		function calculatePosition(a, s, e, b, m){
 			var total=d3.sum(a);
@@ -93,9 +69,8 @@ var colClusterGenre = [["Comedy","Action","Animation"],["Action","Drama","Comedy
 			);
 			return ret;
 		}
-console.log(data.data[0].map(function(d){ return d3.sum(d);}));
-
-console.log(data.data[1].map(function(d){ return d3.sum(d);}));
+//console.log(data.data[0].map(function(d){ return d3.sum(d);}));
+//console.log(data.data[1].map(function(d){ return d3.sum(d);}));
 		vis.mainBars = [ 
 			calculatePosition( rowClusterProp, 0, height, buffMargin, minHeight),
 			calculatePosition( colClusterProp, 0, height, buffMargin, minHeight)
@@ -139,7 +114,8 @@ console.log(data.data[1].map(function(d){ return d3.sum(d);}));
 		};
 	}
 	
-	function drawPart(data, id, p, test){
+	function drawPart(data, id, p, test,rowClusterProp,colClusterProp){
+                var prop = [rowClusterProp,colClusterProp];
 		d3.select("#"+id).append("g").attr("class","part"+p)
 			.attr("transform","translate("+( p*(bb+b))+",0)");
 		d3.select("#"+id).select(".part"+p).append("g").attr("class","subbars");
@@ -220,7 +196,7 @@ console.log(data.data[1].map(function(d){ return d3.sum(d);}));
 		return [0, d.y1, bb, d.y2, bb, d.y2+d.h2, 0, d.y1+d.h1].join(" ");
 	}	
 	
-	function transitionPart(data, id, p){
+	function transitionPart(data, id, p,prop,info){
 		var mainbar = d3.select("#"+id).select(".part"+p).select(".mainbars")
 			.selectAll(".mainbar").data(data.mainBars[p]);
 		
@@ -261,9 +237,10 @@ console.log(data.data[1].map(function(d){ return d3.sum(d);}));
 			.style("opacity",function(d){ return (d.h1 ==0 || d.h2 == 0 ? 0 : 0.5);});	
 	}
 	
-	function transition(data, id){
-		transitionPart(data, id, 0);
-		transitionPart(data, id, 1);
+	function transition(data, id,rowClusterPro,colClusterPro,info){
+                var prop = [rowClusterPro,colClusterPro];
+		transitionPart(data, id, 0,prop,info);
+		transitionPart(data, id, 1,prop,info);
 		transitionEdges(data, id);
 	}
 	
@@ -271,11 +248,14 @@ console.log(data.data[1].map(function(d){ return d3.sum(d);}));
 		data.forEach(function(biP,s){
 			svg.append("g")
 				.attr("id", biP.id)
-				.attr("transform","translate("+ (550*s)+",0)");
-				
-			var visData = visualize(biP.data);
-			drawPart(visData, biP.id, 0,info);
-			drawPart(visData, biP.id, 1,info); 
+				.attr("transform","translate("+ (550*s)+",0)");	
+			var visData = visualize(biP.data,biP.rowClusterProp,biP.colClusterProp);
+                        var info = {};
+                        info.labels = [biP.rowClusterJob,biP.colClusterGenre];
+                        info.proportions = [biP.rowClusterJobProp,biP.colClusterGenreProp];                        
+
+			drawPart(visData, biP.id, 0,info,biP.rowClusterProp,biP.colClusterProp);
+			drawPart(visData, biP.id, 1,info,biP.rowClusterProp,biP.colClusterProp); 
 			drawEdges(visData, biP.id);
 			drawHeader(biP.header, biP.id);
 			
@@ -300,16 +280,16 @@ console.log(data.data[1].map(function(d){ return d3.sum(d);}));
 									$("#graphHolder").append('</ul>')
                                                                         //Show the tooltip
                                                                         d3.select("#tooltip").classed("hidden", false);
-                                                                         return bP.selectSegment(data, p, i); })
+                                                                         return bP.selectSegment(data, p, i,biP.rowClusterProp,biP.colClusterProp,info); })
 					.on("mouseout",function(d, i){   d3.select(this).classed("cell-hover",false);
 					                                                    $("#info").empty(); 
                                                                          d3.select("#tooltip").classed("hidden", true);
-                                                                         return bP.deSelectSegment(data, p, i); });	
+                                                                         return bP.deSelectSegment(data, p, i,biP.rowClusterProp,biP.colClusterProp,info); });	
 			});
 		});	
 	}
 	
-	bP.selectSegment = function(data, m, s){
+	bP.selectSegment = function(data, m, s,rowClusterPro,colClusterPro,info){
 		data.forEach(function(k){
 			var newdata =  {keys:[], data:[]};	
 				
@@ -320,7 +300,7 @@ console.log(data.data[1].map(function(d){ return d3.sum(d);}));
 			newdata.data[1-m] = k.data.data[1-m]
 				.map( function(v){ return v.map(function(d, i){ return (s==i ? d : 0);}); });
 			
-			transition(visualize(newdata), k.id);
+			transition(visualize(newdata,rowClusterPro,colClusterPro), k.id,rowClusterPro,colClusterPro,info);
 				
 			var selectedBar = d3.select("#"+k.id).select(".part"+m).select(".mainbars")
 				.selectAll(".mainbar").filter(function(d,i){ return (i==s);});
@@ -333,9 +313,9 @@ console.log(data.data[1].map(function(d){ return d3.sum(d);}));
 		});
 	}	
 	
-	bP.deSelectSegment = function(data, m, s){
+	bP.deSelectSegment = function(data, m, s,rowClusterPro,colClusterPro,info){
 		data.forEach(function(k){
-			transition(visualize(k.data), k.id);
+			transition(visualize(k.data,rowClusterPro,colClusterPro), k.id,rowClusterPro,colClusterPro,info);
 			
 			var selectedBar = d3.select("#"+k.id).select(".part"+m).select(".mainbars")
 				.selectAll(".mainbar").filter(function(d,i){ return (i==s);});
@@ -346,7 +326,6 @@ console.log(data.data[1].map(function(d){ return d3.sum(d);}));
 			selectedBar.selectAll(".barpercent1").style('font-weight','normal');
 		});		
 	}
-	
 	this.bP = bP;
 }();
 
