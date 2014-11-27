@@ -1,5 +1,7 @@
 module.exports = function (app) {
 
+    var corpus = require('../controllers/test/corpus')
+
     var testStorage = require('../controllers/test/storage')
     var testCommunications = require('../controllers/test/communications')
 
@@ -28,7 +30,8 @@ module.exports = function (app) {
           res.render('coclustering/coclusteringBipartiteVisu.jade');
     });
         app.get('/bipartiteDocsTerms', function (req, res) {
-          res.render('coclustering/coclusteringBipartiteDocTermVisu.jade');
+           corpus.corpusCoclusterDocTerm(req,res); 
+          //res.render('coclustering/coclusteringBipartiteDocTermVisu.jade');
     });
 
       app.get('/testStorage', function (req, res) {
