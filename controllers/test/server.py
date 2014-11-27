@@ -3,6 +3,35 @@ import tornado.websocket
 import tornado.ioloop
 import tornado.web
 import json
+
+from sklearn.datasets import make_biclusters
+from sklearn.datasets import samples_generator as sg
+from sklearn.cluster.bicluster import SpectralCoclustering
+from sklearn.cluster import MiniBatchKMeans
+from sklearn.metrics import consensus_score
+from sklearn.metrics.cluster import v_measure_score
+from sklearn.feature_extraction.text  import TfidfTransformer
+from sklearn.preprocessing import normalize
+from sklearn import metrics
+import sklearn
+import sys
+import scipy.sparse as sp
+
+from azure.storage import BlobService
+# put_block_blob_from_text put_block_blob_from_bytes  .put_block_blob_from_path('images', 'image.png', 'uploads/image.png')
+# get_blob_to_bytes get_blob_to_file get_blob_to_text
+
+
+import numpy as np
+
+import os.path
+
+from time import time
+from collections import Counter
+
+from scipy.io import loadmat, savemat
+
+nbClust=3
  
  
 class WSHandler(tornado.websocket.WebSocketHandler):
@@ -26,6 +55,8 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         try :
             self.write_message("I have received your message: %s %s %s " \
                                % ( obj["corpus"], obj["nbrows"] ,obj["nbcols"]) )
+            # get blob
+            # matlabdoc= loadmat(dataDir +'classic3.mat')
         except tornado.websocket.WebSocketClosedError, e :
             print e
  
