@@ -31,7 +31,8 @@ from collections import Counter
 
 from scipy.io import loadmat, savemat
 
-nbClust=3
+from spectral import *
+
  
  
 class WSHandler(tornado.websocket.WebSocketHandler):
@@ -53,10 +54,11 @@ class WSHandler(tornado.websocket.WebSocketHandler):
             print e
             self.close()
         try :
-            self.write_message("I have received your message: %s %s %s " \
-                               % ( obj["corpus"], obj["nbrows"] ,obj["nbcols"]) )
-            # get blob
-            # matlabdoc= loadmat(dataDir +'classic3.mat')
+            resp=testSpectral(obj["corpus"], obj["nbrows"] ,obj["nbcols"])
+            
+            self.write_message("I have received your message: %s %s %s  %s " \
+                               % ( obj["corpus"], obj["nbrows"] ,obj["nbcols"] , resp))
+
         except tornado.websocket.WebSocketClosedError, e :
             print e
  

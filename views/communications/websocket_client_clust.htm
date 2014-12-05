@@ -1,40 +1,21 @@
-extends ../layout
-block content
-  section(class="featured")
-    div(class="content-wrapper")
-        hgroup(class="title")
-            h2 Communication
-  <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-  <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-  <script src="http://jquery-ui.googlecode.com/svn/tags/latest/external/jquery.bgiframe-2.1.2.js" type="text/javascript"></script>
-  <link href = "/css/Bipartite.css" rel="stylesheet" type="text/css"/>
-  <link rel="stylesheet" href="http://code.jquery.com/ui/1.8.23/themes/base/jquery-ui.css" type="text/css" media="all" />
-  <link href="langnet.css" rel="stylesheet" type="text/css" />
-  <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-  section(class="main-content")
-  h1 WebSockets Hello World</h1>
-  div
-    form(name="input")
-
-      label(for="host") Corpus Name:</label>
-      input(type="text", id="corpus", style="background:#00FF00;"
-      br
-      label(for="host") Number of rows:
-      input type="text", id="nbrows", style="background:#00FF00;")
-      br
-      label(for="port">Number of cols")
-      input type="text" id="nbcols", style="background:#00FF00;")
-      br
-      input(type="submit", id="ok", value="ok")
-    
-   h2 WebSocket Test
-   div( id="output")
-   script.
-     $(document).ready(function () {
+<!doctype html>
+<html>
+  <head>
+    <title>WebSockets</title>
+    <meta charset="utf-8" />
+    <style type="text/css">
+      body {
+        text-align: center;
+        min-width: 500px;
+      }
+    </style>
+    <script src="http://code.jquery.com/jquery.min.js"></script>
+    <script>
+      $(document).ready(function () {
 	  
 	    var host="localhost";
 		var port=8888;
-		var uri="/ws";
+		var uri="/testCommunications/ws";
  
         var ws;
         $("#ok").click(function(evt) {
@@ -77,4 +58,21 @@ block content
 		  });
  
       });
-   
+    </script>
+  </head>
+ 
+  <body>
+    <h1>WebSockets Hello World</h1>
+    <div>
+      <label for="host">Corpus Name:</label>
+      <input type="text" id="corpus" style="background:#00FF00;"/><br />
+      <label for="host">Number of rows:</label>
+      <input type="text" id="nbrows" style="background:#00FF00;"/><br />
+      <label for="port">Number of cols:</label>
+      <input type="text" id="nbcols" style="background:#00FF00;"/><br />
+      <input type="submit" id="ok" value="ok" />
+    </div>
+	<h2>WebSocket Test</h2>
+	<div id="output"></div>
+  </body>
+</html>

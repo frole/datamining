@@ -4,6 +4,7 @@ module.exports = function (app) {
 
     var testStorage = require('../controllers/test/storage')
     var testCommunications = require('../controllers/test/communications')
+    var testCommunicationsWs = require('../controllers/test/communications-ws')
 
     // home page
     app.get('/', function (req, res) {
@@ -41,7 +42,8 @@ module.exports = function (app) {
   
       app.get('/testCommunications', function (req, res) {
           //res.render('test/test.jade');       
-          testCommunications.serviceBusFunction(req,res);
+         // testCommunications.serviceBusFunction(req,res);
+           testCommunicationsWs.wsFunction(req,res);
     });
 
    app.get('/testCommunications/ws', function (req, res) {

@@ -1,6 +1,7 @@
 {
    "STORAGE_NAME" : "biodata",
    "STORAGE_KEY": "7qhUGYKd5QHxj231LFSXgiIm8TuhY+eK8DK0skkljgUi8jEERKOrzTkOJwSA5ZjVrRWaMtGz8U4xTUeJKUSIYw==",
+   "CONTAINER" : "test",
    "serviceBusNamespace" : "esparis",
    "serviceBusAccessKey" : "n7iDr6sK5YOrO0OFOvofDRjrEfRuT0SZaIFVFF9xSQ0=",
     "queueName"  : "servicerequest"
