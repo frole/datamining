@@ -69,5 +69,28 @@ for k in matlabdoc.keys() :
         document_names=matlabdoc[k]
         print  "doc names" , len(document_names)
 
+txt2=blsvc.get_blob('test', 'data/classic3_result.txt')
+#print "rrr"  , txt2
+
+for blob in blsvc.list_blobs('test') :
+    print blob.name
+
+result="AAA BBB CCC"
+with open("result-file.txt" ,"w") as rf :
+    rf.write(result)
+
+##blsvc.put_blob
+
+blsvc.put_blob('test', 'data/cluster-0.mat', "/home/frole/recherche/data/dhillon/cluster-0.mat", \
+               x_ms_blob_type = "BlockBlob")
+
+blsvc.put_blob('test', 'data/cluster-1.mat', "/home/frole/recherche/data/dhillon/cluster-1.mat", \
+               x_ms_blob_type = "BlockBlob")
+
+blsvc.put_blob('test', 'data/cluster-0.mat', "/home/frole/recherche/data/dhillon/cluster-2.mat", \
+               x_ms_blob_type = "BlockBlob")
+
+
+
 
 
