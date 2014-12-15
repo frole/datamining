@@ -249,13 +249,12 @@
 			svg.append("g")
 				.attr("id", biP.id)
 				.attr("transform","translate("+ (550*s)+",0)");	
-			var visData = visualize(biP.data,biP.rowClusterProp,biP.colClusterProp);
+			var visData = visualize(biP.data,biP.row_cluster_sizes,biP.col_cluster_sizes);
                         var info = {};
                         info.labels = [biP.rowClusterJob,biP.colClusterGenre];
-                        info.proportions = [biP.rowClusterJobProp,biP.colClusterGenreProp];                        
-
-			drawPart(visData, biP.id, 0,info,biP.rowClusterProp,biP.colClusterProp);
-			drawPart(visData, biP.id, 1,info,biP.rowClusterProp,biP.colClusterProp); 
+                        info.proportions = [biP.global_row_cluster_info,biP.global_row_cluster_info];                        
+			drawPart(visData, biP.id, 0,info,biP.row_cluster_sizes,biP.col_cluster_sizes);
+			drawPart(visData, biP.id, 1,info,biP.row_cluster_sizes,biP.col_cluster_sizes); 
 			drawEdges(visData, biP.id);
 			drawHeader(biP.header, biP.id);
 			
@@ -280,11 +279,11 @@
 									$("#graphHolder").append('</ul>')
                                                                         //Show the tooltip
                                                                         d3.select("#tooltip").classed("hidden", false);
-                                                                         return bP.selectSegment(data, p, i,biP.rowClusterProp,biP.colClusterProp,info); })
+                                                                         return bP.selectSegment(data, p, i,biP.row_cluster_sizes,biP.col_cluster_sizes,info); })
 					.on("mouseout",function(d, i){   d3.select(this).classed("cell-hover",false);
 					                                                    $("#info").empty(); 
                                                                          d3.select("#tooltip").classed("hidden", true);
-                                                                         return bP.deSelectSegment(data, p, i,biP.rowClusterProp,biP.colClusterProp,info); });	
+                                                                         return bP.deSelectSegment(data, p, i,biP.row_cluster_sizes,biP.col_cluster_sizes,info); });	
 			});
 		});	
 	}

@@ -24,5 +24,5 @@ block content
     var svg = d3.select("#bipartite")
                 .append("svg").attr('width',width).attr('height',(height+margin.b+margin.t))
                 .append("g").attr("transform","translate("+ margin.l+","+margin.t+")");
-    var data = [{data:bP.partData(sales_data,2), id:'SalesAttempts', header:["Doc-Clusters","Term-Clusters", "Documents/Terms "],         rowClusterProp:biparti.rowClusterProp,colClusterProp:biparti.colClusterProp,rowClusterJob:biparti.rowClusterJob,colClusterGenre:biparti.colClusterGenre,rowClusterJobProp:biparti.rowClusterJobProp,colClusterGenreProp:biparti.colClusterGenreProp}];
+    var data = [{data:bP.partData(sales_data,2), id:'SalesAttempts', header:["Doc-Clusters","Term-Clusters", "Documents/Terms "],         row_cluster_sizes:biparti.row_cluster_sizes,col_cluster_sizes:biparti.col_cluster_sizes,rowClusterJob:biparti.rowClusterJob,colClusterGenre:biparti.colClusterGenre,global_row_cluster_info:biparti.global_row_cluster_info}];
     bP.draw(data, svg);

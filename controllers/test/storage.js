@@ -44,7 +44,7 @@ exports.storeFunction= function (req, res) {
 
 });
 
-/*  blobSvc.createBlockBlobFromLocalFile('test', 'Bipartite', '/home/aghiles/Bureau/datamining/controllers/test/Bipartite.txt', function(error, result, response){
+ /* blobSvc.createBlockBlobFromLocalFile('test', 'BipartiteNew', '/home/aghiles/Bureau/datamining/controllers/test/Bipartite.txt', function(error, result, response){
   if(!error){
     console.log("creation of Bipartite Blob from Bipartite.txt");
   }

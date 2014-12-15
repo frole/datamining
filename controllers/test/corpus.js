@@ -40,7 +40,7 @@ exports.corpusClusterShowResults= function (req, res) {}
  exports.corpusCoclusterDocTerm= function (req, res) {
 
 
-    blobSvc.getBlobToText("test","Bipartite",
+    blobSvc.getBlobToText("test","BipartiteNew",
     function(err, bipartite, blob) {
         if (err) {
             console.error("Couldn't download blob %s", "Bipartite blob");
