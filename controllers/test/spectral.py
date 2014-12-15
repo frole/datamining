@@ -116,131 +116,147 @@ def testSpectral(corpus,nbrows,nbcols) :
                 f.write(txt)
             m=loadmat("temp/temp.mat")['a']
         matrices[k]=m
-    return "COCLUSTERING-RESULTS"
         
 
-##### ///////////////////////////////////////////////////////
-#####  Relire les matrices de chaque co-cluster et en déduire
-#####  un tableau resumant le co-clustering et un graphe pour chaque co-cluster
-##
-##
-##
-##
-##conflictWords=dict()
-##X_tfidf.data[X_tfidf.data>0]=1 # clip to compute MI scores below
-### !!!!! X_tfidf est reutilise dans conflicDetection  !!!!!!!!!!!!!!!!!!!!!
-##scores=np.zeros((nbClust,X_tfidf.shape[1]), dtype=float)
-##with open("../data/smartStopwords.txt" , 'r') as f :
-##    stopwords=f.read().split()
-##
-##
-##rowClusterProp=list() # [[{"educator":0.2,"engineer":0.1} ] , [{}] ]
-##
-##for k in matrices :
-##    print
-##    print  "==============================================================="
-##    print  "======================co-cluster" , k  ,"======================"
-##    print  "==============================================================="
-##    m=matrices[k]
-##    print  "submatrix has {} nnz)".format(m.nnz)
-##    print  "submatrix has {} rows)".format(len(np.unique(np.nonzero(m)[0])))
-##    print  "submatrix has {} cols)".format(len(np.unique(np.nonzero(m)[1])))
-##    print  "submatrix shape" , m.shape
-##    print
-##
-##    cran=0.
-##    cisi=0.
-##    med=0.
-##    docsInsim=len(np.unique(m.nonzero()[0]))
-##    print "nb docs in sim"
-##    for d in np.unique(m.nonzero()[0]) :
-##        if d < 1033 :
-##            med+=1
-##        elif d < 2493 :
-##            cisi+=1
-##        else :
-##            cran+=1
-##
-##    print "cran" , cran / docsInsim , "%"
-##    print "med" , med / docsInsim , "%"
-##    print "cisi" , cisi/ docsInsim , "%"
-##
-##    #/////////////////////////////////////
-##    # //////  Make copies of matrix m ////
-##    # /////////////////////////////////////
-##                             
-##    m1= m.copy()  # original content for building the term term sim matrix
-##    m2 = m.copy() # original content for building the doc doc sim matrix
-##    print "****************"
-##    print "m.nnz" , m.nnz
-##    print "m2.nnz" , m2.nnz
-##
-##    # /////////////////////////////////////
-##    # /////////   TERMS TERMS TERMS  //////
-##    # /////////////////////////////////////
-##
-##    
-##
-##    # choisir entre cent ou mi
-##
-##    # //// Select top terms using MI scores    /////
-##    # /////////////////////////////////////////////////////
-##    
-##    mi=True
-##    if mi :
-##        print "======== Compute MI scores    ========="
-##        m.data[m.data>0]=1  # first, clip ; X_TFIDF has already been clipped
-##        #m_non_zeros=m.nonzero()[0]
-####        docsInCocluster=np.unique(m.nonzero()[0])
-####        nbDocsInCluster=len(np.unique(m.nonzero()[0]))     ???????? !!!!!!!
-##        nbDocsInCluster=docsInsim # nbDocs in this submatrix
-##        nbDocs=X_tfidf.shape[0]
-##        print("   nbDocsInCluster {} nbDocs {}".format(nbDocsInCluster, nbDocs))
-##        for t in np.unique(m.nonzero()[1]) :
-##            n_11=m[:,t].sum() # nb docs dans k qui ont t
-##            n_01= nbDocsInCluster - n_11 # nb docs dans k qui ont pas t
-##            n_10= X_tfidf[:,t].sum() - n_11 # nb docs hors de k mais avec t
-##            n_00=  int(nbDocs -  nbDocsInCluster - n_10 )  # nb docs hors de k et sans t
-##            epsi=1e-09
-##            n_1d=n_11 +  n_10
-##            n_d1=n_11 + n_01
-##            n_0d=n_01 + n_00
-##            n_d0=n_00 + n_10
-##
-##            # n_d1 equals nbDocsInCluster
-##
-##            mi=n_11/nbDocs  * ( np.log2( (nbDocs * n_11) / ((n_1d * n_d1) + epsi) + epsi ) ) +\
-##                   n_01/nbDocs * ( np.log2( (nbDocs * n_01) / ((n_0d * n_d1)+ epsi)  + epsi ) )   + \
-##                   n_10/nbDocs * ( np.log2( (nbDocs * n_10) / ((n_1d * n_d0) + epsi)   + epsi) ) + \
-##                   n_00/nbDocs * ( np.log2( (nbDocs * n_00) / ((n_0d * n_d0) + epsi)  + epsi ) )
-##
-##            scores[k,t]=mi   # fill line k
-##
-##        
-##        clust_prop_list=list() # pour chaque clust, un objet dans une liste [{}]
-##        clust_prop_dic=dict()
-##        
-##        max_to_examine=50 # retain the lim last ones as candidates (max scores)
-##        max_to_keep=15 # retain the lim last ones as candidates (max scores)
-##        best_candidates=np.argsort(scores[k,:])[:-max_to_examine:-1]
-##        nb_kept=0
-##        for t in  best_candidates :
-##                if nb_kept >= max_to_keep : break
-##                if len(feature_names[t][0][0]) < 3 : continue
-##                if feature_names[t][0][0].endswith("ed") : continue
-##                if feature_names[t][0][0].endswith("ly") : continue
-##                if feature_names[t][0][0].endswith("ing") : continue
-##                if feature_names[t][0][0] in stopwords : continue
-##                nb_kept+=1
-##                clust_prop_dic[feature_names[t][0][0] ] = scores[k,t]
-##        clust_prop_list.append(clust_prop_dic)
-##        rowClusterProp.append(clust_prop_list)
-##
+    ### ///////////////////////////////////////////////////////
+    ###  Relire les matrices de chaque co-cluster et en déduire
+    ###  un tableau resumant le co-clustering et un graphe pour chaque co-cluster
+
+
+
+
+    conflictWords=dict()
+    X_tfidf.data[X_tfidf.data>0]=1 # clip to compute MI scores below
+    # !!!!! X_tfidf est reutilise dans conflicDetection  !!!!!!!!!!!!!!!!!!!!!
+    scores=np.zeros((nbClust,X_tfidf.shape[1]), dtype=float)
+    txt=blsvc.get_blob(container, 'data/smartStopwords.txt')
+    stopwords=txt.split()
+    print "DEBUG" , stopwords
+
+    # Response Structure   <================================================================
+    global_row_cluster_info=list() # [[{"educator":0.2,"engineer":0.1} ] , [{}] ]
+    row_cluster_sizes= list()     # [217,140,195,172,125,94];
+    col_cluster_sizes=list()
+    resp=dict()  # contains all the above info 
+    
+
+    for k in matrices :
+        print
+        print  "==============================================================="
+        print  "======================co-cluster" , k  ,"======================"
+        print  "==============================================================="
+        
+        m=matrices[k]
+        
+        print  "submatrix has {} nnz)".format(m.nnz)
+        print  "submatrix has {} rows)".format(len(np.unique(np.nonzero(m)[0])))
+        print  "submatrix has {} cols)".format(len(np.unique(np.nonzero(m)[1])))
+        print  "submatrix shape" , m.shape
+        print
+
+        cran=0.
+        cisi=0.
+        med=0.
+        docsInsim=len(np.unique(m.nonzero()[0]))
+        print "nb docs in sim"
+        for d in np.unique(m.nonzero()[0]) :
+            if d < 1033 :
+                med+=1
+            elif d < 2493 :
+                cisi+=1
+            else :
+                cran+=1
+
+        print "cran" , cran / docsInsim , "%"
+        print "med" , med / docsInsim , "%"
+        print "cisi" , cisi/ docsInsim , "%"
+
+        #/////////////////////////////////////
+        # //////  Make copies of matrix m ////
+        # /////////////////////////////////////
+                                 
+        m1= m.copy()  # original content for building the term term sim matrix
+        m2 = m.copy() # original content for building the doc doc sim matrix
+        print "****************"
+        print "m.nnz" , m.nnz
+        print "m2.nnz" , m2.nnz
+
+        # /////////////////////////////////////
+        # /////////   TERMS TERMS TERMS  //////
+        # /////////////////////////////////////
+
+        
+
+        # choisir entre cent ou mi
+
+        # //// Select top terms using MI scores    /////
+        # /////////////////////////////////////////////////////
+        
+        mi=True
+        if mi :
+            print "======== Compute MI scores    ========="
+            m.data[m.data>0]=1  # first, clip ; X_TFIDF has already been clipped
+            #m_non_zeros=m.nonzero()[0]
+    ##        docsInCocluster=np.unique(m.nonzero()[0])
+    ##        nbDocsInCluster=len(np.unique(m.nonzero()[0]))     ???????? !!!!!!!
+            nbDocsInCluster=docsInsim # nbDocs in this submatrix
+            nbDocs=X_tfidf.shape[0]
+            print("   nbDocsInCluster {} nbDocs {}".format(nbDocsInCluster, nbDocs))
+            for t in np.unique(m.nonzero()[1]) :
+                n_11=m[:,t].sum() # nb docs dans k qui ont t
+                n_01= nbDocsInCluster - n_11 # nb docs dans k qui ont pas t
+                n_10= X_tfidf[:,t].sum() - n_11 # nb docs avec t mais hors de k 
+                n_00=  int(nbDocs -  nbDocsInCluster - n_10 )  # nb docs hors de k et sans t
+                epsi=1e-09
+                n_1d=n_11 +  n_10
+                n_d1=n_11 + n_01
+                n_0d=n_01 + n_00
+                n_d0=n_00 + n_10
+
+                # n_d1 equals nbDocsInCluster
+
+                mi=n_11/nbDocs  * ( np.log2( (nbDocs * n_11) / ((n_1d * n_d1) + epsi) + epsi ) ) +\
+                       n_01/nbDocs * ( np.log2( (nbDocs * n_01) / ((n_0d * n_d1)+ epsi)  + epsi ) )   + \
+                       n_10/nbDocs * ( np.log2( (nbDocs * n_10) / ((n_1d * n_d0) + epsi)   + epsi) ) + \
+                       n_00/nbDocs * ( np.log2( (nbDocs * n_00) / ((n_0d * n_d0) + epsi)  + epsi ) )
+
+                scores[k,t]=mi   # fill line k
+
+        # pour chaque clust, on a un objet dans une liste [{}]
+        # plus  son effectif dans row_cluster_sizes = [217,140,195,172,125,94]; et col_cluster_prop
+        clust_prop_list=list() 
+        clust_prop_dic=dict()
+
+        row_cluster_sizes.append(len(np.unique(np.nonzero(m)[0])))
+        col_cluster_sizes.append(len(np.unique(np.nonzero(m)[1])))
+
+        max_to_examine=50 # retain the lim last ones as candidates (max scores)
+        max_to_keep=15 # retain the lim last ones as candidates (max scores)
+        best_candidates=np.argsort(scores[k,:])[:-max_to_examine:-1]
+        nb_kept=0
+        for t in  best_candidates :
+                if nb_kept >= max_to_keep : break
+                if len(feature_names[t][0][0]) < 3 : continue
+                if feature_names[t][0][0].endswith("ed") : continue
+                if feature_names[t][0][0].endswith("ly") : continue
+                if feature_names[t][0][0].endswith("ing") : continue
+                if feature_names[t][0][0] in stopwords : continue
+                nb_kept+=1
+                clust_prop_dic[feature_names[t][0][0] ] = float("{:.3f}".format(scores[k,t]))
+        clust_prop_list.append(clust_prop_dic)
+        global_row_cluster_info.append(clust_prop_list) #  add [{}} to global_row_cluster_info list
+   
+    resp['col_cluster_sizes']=col_cluster_sizes
+    resp['row_cluster_sizes']=row_cluster_sizes
+    resp[' global_row_cluster_info']= global_row_cluster_info
+    r =json.dumps(resp)
+    return r
+
 ##    # //// Select docs closest to centroid  ////////////////
 ##    # /////////////////////////////////////////////////////
 ##        
 ##        
-##print json.dumps(rowClusterProp)        
+##      
 ##            
 ##        
 ##    # //// Select initial top terms using centroids  ///
