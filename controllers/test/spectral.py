@@ -93,7 +93,7 @@ def testSpectral(corpus,nbrows,nbcols) :
     X_tfidf=X_tfidf.tocsc()  # csc seule matrice a accepter des extractions de blocs discontinus
 
     for k in range(nbClust) :
-        if not (blobExists(blsvc, container, 'data/' + corpus + '-cluster-' + str(k)+ '.mat')) :
+        if not (blobExists(blsvc, container, 'data/' + corpus + "-nbclust-" + str(nbClust) + '-cluster-' + str(k)+ '.mat')) :
                 print  "======= building matrix for co-cluster", k
                 r_indices=cocluster.get_indices(k)[0]
                 print  "r_indices length" , len(r_indices)
@@ -107,11 +107,11 @@ def testSpectral(corpus,nbrows,nbcols) :
                 print "m.nnz" ,  m.nnz
                 savemat('temp/temp.mat', {'a' : m})
                 txt=file('temp/temp.mat').read()
-                blsvc.put_blob(container ,'data/' + corpus + '-cluster-' + str(k)+ '.mat' , txt,\
+                blsvc.put_blob(container ,'data/' + corpus + "-nbclust-" + str(nbClust) + '-cluster-' + str(k)+ '.mat' , txt,\
                                x_ms_blob_type = "BlockBlob")
         else :
             print  "======= loading matrix for co-cluster", k
-            txt= blsvc.get_blob(container,'data/' + corpus + '-cluster-' + str(k)  + '.mat' )
+            txt= blsvc.get_blob(container,'data/' + corpus + "-nbclust-" + str(nbClust) +  '-cluster-' + str(k)  + '.mat' )
             with open("temp/temp.mat","wb") as f:
                 f.write(txt)
             m=loadmat("temp/temp.mat")['a']
