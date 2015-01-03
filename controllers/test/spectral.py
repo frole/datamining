@@ -105,6 +105,7 @@ def testSpectral(corpus,nbrows,nbcols) :
     ##            print  r_indices[:,np.newaxis]
     ##            print  X_tfidf[1, c_indices]
                 print "m.nnz" ,  m.nnz
+                m=m.tocsc()
                 savemat('temp/temp.mat', {'a' : m})
                 txt=file('temp/temp.mat').read()
                 blsvc.put_blob(container ,'data/' + corpus + "-nbclust-" + str(nbClust) + '-cluster-' + str(k)+ '.mat' , txt,\
@@ -131,7 +132,6 @@ def testSpectral(corpus,nbrows,nbcols) :
     scores=np.zeros((nbClust,X_tfidf.shape[1]), dtype=float)
     txt=blsvc.get_blob(container, 'data/smartStopwords.txt')
     stopwords=txt.split()
-    print "DEBUG" , stopwords
 
     # Response Structure   <================================================================
     global_row_cluster_info=list() # [[{"educator":0.2,"engineer":0.1} ] , [{}] ]
