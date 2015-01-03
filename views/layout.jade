@@ -24,10 +24,10 @@ html
           section#login
             ul
             -if(!everyauth.loggedIn)
-                //li
-                    //a(href="/register") Register
-                //li
-                    //a(href="/login") Log in
+                //-li
+                    //-a(href="/register") Register
+                //-li
+                    //-a(href="/login") Log in
                     
             -else
                 -if(everyauth.facebook)
@@ -42,10 +42,10 @@ html
             ul#menu
               li 
                 a(href="/") Home
-              //li 
+              //-li 
                 //a(href="/chat") Chat
-              //li
-                //a(href="/about") About
+              //-li
+                //-a(href="/about") About
     #body
         block content
       
