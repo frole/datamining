@@ -35,7 +35,7 @@ from scipy.io import loadmat, savemat
 from spectral import *
 
  
- 
+# http://localhost:3000/testSetParametersDocTerm
 class WSHandler(tornado.websocket.WebSocketHandler):
 
     def check_origin(self, origin):
@@ -57,7 +57,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         try :
             resp=testSpectral(obj["corpus"], obj["nbrows"] ,obj["nbcols"])
             
-            self.write_message("I have received your message: %s %s %s  %s " \
+            self.write_message("  REQUEST was: %s %s %s ; RESPONSE is: %s " \
                                % ( obj["corpus"], obj["nbrows"] ,obj["nbcols"] , resp))
 
         except tornado.websocket.WebSocketClosedError, e :
