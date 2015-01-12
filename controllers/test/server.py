@@ -35,7 +35,7 @@ from scipy.io import loadmat, savemat
 from spectral import *
 
  
- 
+# http://localhost:3000/testSetParametersDocTerm
 class WSHandler(tornado.websocket.WebSocketHandler):
 
     def check_origin(self, origin):
