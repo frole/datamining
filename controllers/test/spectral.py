@@ -287,7 +287,7 @@ def testSpectral(corpus,nbrows,nbcols) :
     r =json.dumps(resp)
     return r
 
-##    # //// Select docs closest to centroid  ////////////////
+##    # //// Select docs closest to centroid - new  ////////////////
 ##    # /////////////////////////////////////////////////////
 ##        
 ##        
