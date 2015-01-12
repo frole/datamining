@@ -39,7 +39,14 @@ exports.corpusClusterShowResults= function (req, res) {}
 
  exports.corpusCoclusterDocTerm= function (req, res) {
 
-
+    /*console.log('request received');
+    console.log(req.param('nbrowcluster'));
+    var bp = JSON.parse(req.param('bipartite'));
+    console.log(bp.row_cluster_sizes);*/
+    var corpus=  req.param('corpus');
+    var nbrows = parseInt(req.param('nbrowcluster'));
+    var nbcols = parseInt(req.param('nbcolcluster'));
+    console.log('corpus');
     blobSvc.getBlobToText("test","BipartiteNew",
     function(err, bipartite, blob) {
         if (err) {

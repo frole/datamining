@@ -57,8 +57,8 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         try :
             resp=testSpectral(obj["corpus"], obj["nbrows"] ,obj["nbcols"])
             
-            self.write_message("I have received your message: %s %s %s  %s " \
-                               % ( obj["corpus"], obj["nbrows"] ,obj["nbcols"] , resp))
+            self.write_message("%s" \
+                               % (resp))
 
         except tornado.websocket.WebSocketClosedError, e :
             print e

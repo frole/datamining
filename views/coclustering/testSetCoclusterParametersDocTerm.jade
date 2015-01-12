@@ -61,7 +61,20 @@ block content
            }  
            function onMessage(evt) { 
                                     writeToScreen('<span style="color: blue;">RESPONSE FROM SERVER: ' + evt.data+'</span>');
-                                    websocket.close(); 
+                                    websocket.close();
+                                    $.ajax({
+                                      type: 'GET',
+                                      url : 'http://localhost:3000/bipartiteDocsTerms', 
+                                      dataType : 'json', 
+                                      data : {
+                                          bipartite: evt.data,
+                                      },
+                                      success : function(donnee){
+                                      console.log(donnee);$
+                                      },
+                                      error: function() {
+                                      alert('La requête n\'a pas abouti'); }
+                                    });
            } 
            function onError(evt) { writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data); 
            } 
@@ -70,7 +83,6 @@ block content
            websocket.onclose = function(evt) { onClose(evt) }; 
            websocket.onmessage = function(evt) { onMessage(evt) }; 
            websocket.onerror = function(evt) { onError(evt) }; 
-          
            });
  
        });
