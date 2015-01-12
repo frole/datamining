@@ -12,6 +12,7 @@ import sklearn
 import sys
 import scipy.sparse as sp
 import json
+from operator import itemgetter
 
 import numpy as np
 
@@ -31,7 +32,7 @@ def blobExists(blsvc, containerName, blobName) :
             return True
     return False
 
-
+# http://localhost:3000/testSetParametersDocTerm
 def testSpectral(corpus,nbrows,nbcols) :
     
     nbClust=nbrows
@@ -134,9 +135,10 @@ def testSpectral(corpus,nbrows,nbcols) :
     stopwords=txt.split()
 
     # Response Structure   <================================================================
-    global_row_cluster_info=list() # [[{"educator":0.2,"engineer":0.1} ] , [{}] ]
     row_cluster_sizes= list()     # [217,140,195,172,125,94];
     col_cluster_sizes=list()
+    row_cluster_info= []
+    col_cluster_info= []
     resp=dict()  # contains all the above info 
     
 
@@ -222,13 +224,16 @@ def testSpectral(corpus,nbrows,nbcols) :
 
                 scores[k,t]=mi   # fill line k
 
-        # pour chaque clust, on a un objet dans une liste [{}]
-        # plus  son effectif dans row_cluster_sizes = [217,140,195,172,125,94]; et col_cluster_prop
-        clust_prop_list=list() 
+        # response = object with 4 fields : row_cluster_sizes , col_cluster_sizes,
+        #                                   row_cluster_info, col_cluster_info
+        
         clust_prop_dic=dict()
 
         row_cluster_sizes.append(len(np.unique(np.nonzero(m)[0])))
         col_cluster_sizes.append(len(np.unique(np.nonzero(m)[1])))
+
+        # global_col_cluster_info": [{"top_docs": ["doc15", "doc38", "doc10"],
+        # "docs_with_best_scores": {"doc10": 0.055, "doc122": 0.0... } , {idem for cluster2}, ... ]
 
         max_to_examine=50 # retain the lim last ones as candidates (max scores)
         max_to_keep=15 # retain the lim last ones as candidates (max scores)
@@ -243,12 +248,42 @@ def testSpectral(corpus,nbrows,nbcols) :
                 if feature_names[t][0][0] in stopwords : continue
                 nb_kept+=1
                 clust_prop_dic[feature_names[t][0][0] ] = float("{:.3f}".format(scores[k,t]))
-        clust_prop_list.append(clust_prop_dic)
-        global_row_cluster_info.append(clust_prop_list) #  add [{}} to global_row_cluster_info list
+        k_cluster_object=dict()
+        sorted_term_score_tuples=sorted(clust_prop_dic.iteritems(), key=itemgetter(1), reverse=True)
+        k_cluster_object["top_terms"]= [  t[0] for t in sorted_term_score_tuples[:3] ]
+        k_cluster_object["terms_with_best_scores"]=clust_prop_dic
+        row_cluster_info.append(k_cluster_object) # add info for kth cluster
    
     resp['col_cluster_sizes']=col_cluster_sizes
     resp['row_cluster_sizes']=row_cluster_sizes
-    resp[' global_row_cluster_info']= global_row_cluster_info
+    resp['row_cluster_info']= row_cluster_info
+    resp['col_cluster_info']=[{"top_docs" : ["doc15","doc38","doc10"],
+                                      "docs_with_best_scores" :  {
+                                        "doc10": 0.055,
+                                        "doc122": 0.017,
+                                        "doc15": 0.08,
+                                        "doc38": 0.06,
+                                        "doc6088": 0.045,
+                                        }
+                                      },
+                                      {"top_docs" : ["doc816","doc938","doc1500"],
+                                      "docs_with_best_scores" :  {
+                                        "doc816": 0.085,
+                                        "doc938": 0.082,
+                                        "doc1500": 0.08,
+                                        "doc1901": 0.06,
+                                        "doc1802": 0.06
+                                        }
+                                      },
+                                      {"top_docs" : ["doc2100","doc2502","2040"],
+                                      "docs_with_best_scores" :  {
+                                        "doc2100": 0.075,
+                                        "doc2502": 0.073,
+                                        "doc2040": 0.70,
+                                        "doc38": 0.069
+                                        }
+                                      }
+                                      ]
     r =json.dumps(resp)
     return r
 
