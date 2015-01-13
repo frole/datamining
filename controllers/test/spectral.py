@@ -120,19 +120,19 @@ def testSpectral(corpus,nbrows,nbcols) :
         matrices[k]=m
         
 
-    ### ///////////////////////////////////////////////////////
-    ###  Relire les matrices de chaque co-cluster et en déduire
-    ###  un tableau resumant le co-clustering et un graphe pour chaque co-cluster
-
-
+    
 
 
     conflictWords=dict()
     X_tfidf.data[X_tfidf.data>0]=1 # clip to compute MI scores below
-    # !!!!! X_tfidf est reutilise dans conflicDetection  !!!!!!!!!!!!!!!!!!!!!
-    scores=np.zeros((nbClust,X_tfidf.shape[1]), dtype=float)
+    miScores=np.zeros((nbClust,X_tfidf.shape[1]), dtype=float)
     txt=blsvc.get_blob(container, 'data/smartStopwords.txt')
     stopwords=txt.split()
+
+    
+
+    nbTerms=15
+
 
     # Response Structure   <================================================================
     row_cluster_sizes= list()     # [217,140,195,172,125,94];
@@ -141,20 +141,26 @@ def testSpectral(corpus,nbrows,nbcols) :
     col_cluster_info= []
     resp=dict()  # contains all the above info 
     
-
+    # ///////  MI SCORES FOR TERMS + global stats =======
     for k in matrices :
-        print
-        print  "==============================================================="
-        print  "======================co-cluster" , k  ,"======================"
-        print  "==============================================================="
-        
+               
         m=matrices[k]
         
         print  "submatrix has {} nnz)".format(m.nnz)
         print  "submatrix has {} rows)".format(len(np.unique(np.nonzero(m)[0])))
         print  "submatrix has {} cols)".format(len(np.unique(np.nonzero(m)[1])))
-        print  "submatrix shape" , m.shape
+        print  "subm atrix shape" , m.shape
         print
+        
+        # // prepare global stats here
+        row_cluster_sizes.append(len(np.unique(np.nonzero(m)[0])))
+        col_cluster_sizes.append(len(np.unique(np.nonzero(m)[1])))
+
+        print
+        print
+        print "=======  MI SCORES FOR TERMS FOR CO-CLUSTER" ,k
+        m.data[m.data>0]=1  # first, clip ; X_TFIDF has already been clipped
+        print "Matrix m for cocluster %d ****" % k
 
         cran=0.
         cisi=0.
@@ -173,71 +179,61 @@ def testSpectral(corpus,nbrows,nbcols) :
         print "med" , med / docsInsim , "%"
         print "cisi" , cisi/ docsInsim , "%"
 
-        #/////////////////////////////////////
-        # //////  Make copies of matrix m ////
-        # /////////////////////////////////////
-                                 
-        m1= m.copy()  # original content for building the term term sim matrix
-        m2 = m.copy() # original content for building the doc doc sim matrix
-        print "****************"
-        print "m.nnz" , m.nnz
-        print "m2.nnz" , m2.nnz
 
-        # /////////////////////////////////////
-        # /////////   TERMS TERMS TERMS  //////
-        # /////////////////////////////////////
-
+        nbDocsInCluster=float(len(np.unique(m.nonzero()[0]) ) )# nbDocs in this submatrix
+        nbDocs=float(X_tfidf.shape[0])
+        print("   nbDocsInCluster {} nbDocs {}".format(nbDocsInCluster, nbDocs))
+        for t in np.unique(m.nonzero()[1]) :
+            n_11=float(m[:,t].sum()) # nb docs avec t et dans k
+            n_01= float(nbDocsInCluster - n_11) # nb docs sans t mais dans k
+            n_10= float(X_tfidf[:,t].sum() - n_11 )# nb docs avec t mais hors de k
+            n_00= float( int(nbDocs -  nbDocsInCluster - n_10 ) ) # nb docs hors de k et sans t
+            epsi=float(1e-14)
+            n_1d=n_11 +  n_10
+            n_d1=n_11 + n_01  # en fait, pas a calculer pour chqe terme
+            n_0d=n_01 + n_00
+            n_d0=n_00 + n_10  # pas a calculer pour chqe terme
         
 
-        # choisir entre cent ou mi
+            if n_11 == 0 : n_11 =epsi
+            denom= n_1d * n_d1
+            if denom == 0 : denom = epsi
+            v_11= (n_11 /nbDocs)  * ( np.log2( (nbDocs * n_11) / denom ) )
+    
 
-        # //// Select top terms using MI scores    /////
-        # /////////////////////////////////////////////////////
+            if n_01 == 0 : n_01 =epsi
+            denom= n_0d * n_d1
+            if denom == 0 : denom = epsi
+            v_01= (n_01/nbDocs) * ( np.log2( (nbDocs * n_01) / denom ))
+   
         
-        mi=True
-        if mi :
-            print "======== Compute MI scores    ========="
-            m.data[m.data>0]=1  # first, clip ; X_TFIDF has already been clipped
-            #m_non_zeros=m.nonzero()[0]
-    ##        docsInCocluster=np.unique(m.nonzero()[0])
-    ##        nbDocsInCluster=len(np.unique(m.nonzero()[0]))     ???????? !!!!!!!
-            nbDocsInCluster=docsInsim # nbDocs in this submatrix
-            nbDocs=X_tfidf.shape[0]
-            print("   nbDocsInCluster {} nbDocs {}".format(nbDocsInCluster, nbDocs))
-            for t in np.unique(m.nonzero()[1]) :
-                n_11=m[:,t].sum() # nb docs dans k qui ont t
-                n_01= nbDocsInCluster - n_11 # nb docs dans k qui ont pas t
-                n_10= X_tfidf[:,t].sum() - n_11 # nb docs avec t mais hors de k 
-                n_00=  int(nbDocs -  nbDocsInCluster - n_10 )  # nb docs hors de k et sans t
-                epsi=1e-09
-                n_1d=n_11 +  n_10
-                n_d1=n_11 + n_01
-                n_0d=n_01 + n_00
-                n_d0=n_00 + n_10
+            if n_10 == 0 : n_10 =epsi
+            denom=n_1d * n_d0
+            if denom == 0. : denom = epsi
+            v_10= (n_10/nbDocs) * ( np.log2( (nbDocs * n_10) / denom))
+    
+        
+            if n_00 == 0 : n_00 +=epsi
+            denom= n_0d * n_d0 
+            if denom == 0. : denom = epsi
+            v_00= (n_00/nbDocs) * ( np.log2( (nbDocs * n_00) / denom ))
+    
 
-                # n_d1 equals nbDocsInCluster
-
-                mi=n_11/nbDocs  * ( np.log2( (nbDocs * n_11) / ((n_1d * n_d1) + epsi) + epsi ) ) +\
-                       n_01/nbDocs * ( np.log2( (nbDocs * n_01) / ((n_0d * n_d1)+ epsi)  + epsi ) )   + \
-                       n_10/nbDocs * ( np.log2( (nbDocs * n_10) / ((n_1d * n_d0) + epsi)   + epsi) ) + \
-                       n_00/nbDocs * ( np.log2( (nbDocs * n_00) / ((n_0d * n_d0) + epsi)  + epsi ) )
-
-                scores[k,t]=mi   # fill line k
+            miScores[k,t]= v_11 + v_01 + v_10 + v_00
+        
 
         # response = object with 4 fields : row_cluster_sizes , col_cluster_sizes,
         #                                   row_cluster_info, col_cluster_info
         
         clust_prop_dic=dict()
 
-        row_cluster_sizes.append(len(np.unique(np.nonzero(m)[0])))
-        col_cluster_sizes.append(len(np.unique(np.nonzero(m)[1])))
 
         # global_col_cluster_info": [{"top_docs": ["doc15", "doc38", "doc10"],
         # "docs_with_best_scores": {"doc10": 0.055, "doc122": 0.0... } , {idem for cluster2}, ... ]
 
         max_to_examine=50 # retain the lim last ones as candidates (max scores)
         max_to_keep=15 # retain the lim last ones as candidates (max scores)
-        best_candidates=np.argsort(scores[k,:])[:-max_to_examine:-1]
+        best_candidates=np.argsort(miScores[k,:])[:-max_to_examine:-1]
         nb_kept=0
         for t in  best_candidates :
                 if nb_kept >= max_to_keep : break
@@ -247,43 +243,85 @@ def testSpectral(corpus,nbrows,nbcols) :
                 if feature_names[t][0][0].endswith("ing") : continue
                 if feature_names[t][0][0] in stopwords : continue
                 nb_kept+=1
-                clust_prop_dic[feature_names[t][0][0] ] = float("{:.3f}".format(scores[k,t]))
+                clust_prop_dic[feature_names[t][0][0] ] = float("{:.3f}".format(miScores[k,t]))
         k_cluster_object=dict()
         sorted_term_score_tuples=sorted(clust_prop_dic.iteritems(), key=itemgetter(1), reverse=True)
         k_cluster_object["top_terms"]= [  t[0] for t in sorted_term_score_tuples[:3] ]
         k_cluster_object["terms_with_best_scores"]=clust_prop_dic
         row_cluster_info.append(k_cluster_object) # add info for kth cluster
-   
+
+    # ///////  MI SCORES FOR DOCS =======
+
+    miScores=np.zeros((nbClust,X_tfidf.shape[0]), dtype=float) 
+    for k in matrices :
+        print 
+        
+        m=matrices[k]                          
+
+        print
+        print
+        print "=======  MI SCORES FOR DOCS ======="
+        m.data[m.data>0]=1  # first, clip ; X_TFIDF has already been clipped
+        print "Matrix m for cocluster %d ****" % k
+        
+        nbTermsInCluster=float(len(np.unique(m.nonzero()[1]) ) )# nbDocs in this submatrix
+        nbTerms=float(X_tfidf.shape[1])
+        print("   nbtermsInCluster {} nbterms {}".format(nbTermsInCluster, nbTerms))
+        # Var_1 = terme dans d = 1 sinon 0
+        # Var_2 = terme dans T = 1 sinon 0
+        for d in np.unique(m.nonzero()[0]) :
+            n_11=float(m[d,:].sum()) # nb termes dans d et dans (cluster de termes) k
+            n_01= float(nbTermsInCluster - n_11) # nb termes hors de d mais dans k
+            n_10= float(X_tfidf[d ,:].sum() - n_11 )# nb termes dans d mais hors de k
+            n_00= float( int(nbTerms -  nbTermsInCluster - n_10 ) ) # nb termes hors de d et hors de k
+            epsi=float(1e-14)
+            n_1d=n_11 +  n_10  # nb termes dans d
+            n_d1=n_11 + n_01  # nb termes dans k = nbTermsInCluster
+            n_0d=n_01 + n_00
+            n_d0=n_00 + n_10
+
+            if n_11 == 0 : n_11 =epsi
+            denom= n_1d * n_d1
+            if denom == 0 : denom = epsi
+            v_11= (n_11 /nbTerms)  * ( np.log2( (nbTerms * n_11) / denom ) )
+
+            if n_01 == 0 : n_01 =epsi
+            denom= n_0d * n_d1
+            if denom == 0 : denom = epsi
+            v_01= (n_01/nbTerms) * ( np.log2( (nbTerms * n_01) / denom ))
+
+        
+            if n_10 == 0 : n_10 =epsi
+            denom=n_1d * n_d0
+            if denom == 0. : denom = epsi
+            v_10= (n_10/nbTerms) * ( np.log2( (nbTerms * n_10) / denom))
+        
+            if n_00 == 0 : n_00 +=epsi
+            denom= n_0d * n_d0 
+            if denom == 0. : denom = epsi
+            v_00= (n_00/nbTerms) * ( np.log2( (nbTerms * n_00) / denom ))
+
+
+            miScores[k,d]= v_11 + v_01 + v_10 + v_00
+        clust_prop_dic=dict()
+        max_to_keep=15 # retain the lim last ones as candidates (max scores)
+        best_candidates=np.argsort(miScores[k,:])[:-max_to_keep:-1]
+
+        for d in  best_candidates :
+            clust_prop_dic[ "doc-" + str(d) ] = float("{:.3f}".format(miScores[k,d]))
+        k_cluster_object=dict()
+        sorted_term_score_tuples=sorted(clust_prop_dic.iteritems(), key=itemgetter(1), reverse=True)
+        k_cluster_object["top_docs"]= [  t[0] for t in sorted_term_score_tuples[:3] ]
+        k_cluster_object["docs_with_best_scores"]=clust_prop_dic
+        col_cluster_info.append(k_cluster_object) # add info for kth cluster
+       
     resp['col_cluster_sizes']=col_cluster_sizes
     resp['row_cluster_sizes']=row_cluster_sizes
     resp['row_cluster_info']= row_cluster_info
-    resp['col_cluster_info']=[{"top_docs" : ["doc15","doc38","doc10"],
-                                      "docs_with_best_scores" :  {
-                                        "doc10": 0.055,
-                                        "doc122": 0.017,
-                                        "doc15": 0.08,
-                                        "doc38": 0.06,
-                                        "doc6088": 0.045,
-                                        }
-                                      },
-                                      {"top_docs" : ["doc816","doc938","doc1500"],
-                                      "docs_with_best_scores" :  {
-                                        "doc816": 0.085,
-                                        "doc938": 0.082,
-                                        "doc1500": 0.08,
-                                        "doc1901": 0.06,
-                                        "doc1802": 0.06
-                                        }
-                                      },
-                                      {"top_docs" : ["doc2100","doc2502","2040"],
-                                      "docs_with_best_scores" :  {
-                                        "doc2100": 0.075,
-                                        "doc2502": 0.073,
-                                        "doc2040": 0.70,
-                                        "doc38": 0.069
-                                        }
-                                      }
-                                      ]
+    resp['col_cluster_info']= col_cluster_info
+
+
+
     r =json.dumps(resp)
     return r
 
