@@ -271,7 +271,7 @@
                                                                          $("#info").empty(); 
 								         $("#info").append('<div id="graphHolder">Proportions</div>');
 								         $("#graphHolder").append('<ul id="Proportions">')
-										 temp = bySortedValue(info.proportions[p][i][0]);
+										 temp = bySortedValue(info.proportions[p][i]);
 									for(r in  temp){
                                                                                  $("#Proportions")
                                                                                  .append('<li> '+temp[r][0]+': '+ temp[r][1]+'</li>'); 

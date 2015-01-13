@@ -46,8 +46,12 @@ exports.corpusClusterShowResults= function (req, res) {}
     var corpus=  req.param('corpus');
     var nbrows = parseInt(req.param('nbrowcluster'));
     var nbcols = parseInt(req.param('nbcolcluster'));
+    var topDocs = [];
+    var topTerms = [];
+    var terms_with_best_scores = [];
+    var docs_with_best_scores = [];
     console.log('corpus');
-    blobSvc.getBlobToText("test","BipartiteNew",
+    blobSvc.getBlobToText("test","BipartiteNewFormat",
     function(err, bipartite, blob) {
         if (err) {
             console.error("Couldn't download blob %s", "Bipartite blob");
@@ -55,9 +59,18 @@ exports.corpusClusterShowResults= function (req, res) {}
         } else {
             console.log("Sucessfully downloaded blob %s", "Bipartite blob");
             var json = JSON.parse(bipartite)
-            //res.send(bipartite);
-            var tab = {"tab":[1,1,1],"tab2":[2,2,2]}
-            res.render('coclustering/coclusteringBipartiteDocTermVisu.jade',{graphe:JSON.stringify(json)});
+            for (top in json.col_cluster_info){
+                 topDocs.push(json.col_cluster_info[top].top_docs);
+                 docs_with_best_scores.push(json.col_cluster_info[top].docs_with_best_scores);
+            }
+            for (top in json.row_cluster_info){
+                 topTerms.push(json.row_cluster_info[top].top_terms);
+                 terms_with_best_scores.push(json.row_cluster_info[top].terms_with_best_scores);
+            }
+            var jsonFinal = {"row_cluster_sizes":json.row_cluster_sizes,"col_cluster_sizes":json.col_cluster_sizes,"rowClusterJob":topDocs, "colClusterGenre":topTerms,"global_row_cluster_info":terms_with_best_scores};                       
+              
+            //res.send(jsonFinal);
+            res.render('coclustering/coclusteringBipartiteDocTermVisu.jade',{graphe:JSON.stringify(jsonFinal)});
         }
     });
 

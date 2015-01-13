@@ -56,7 +56,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
             self.close()
         try :
             resp=testSpectral(obj["corpus"], obj["nbrows"] ,obj["nbcols"])
-            
+
             self.write_message("%s" \
                                % (resp))
 
