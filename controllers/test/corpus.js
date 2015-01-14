@@ -39,10 +39,10 @@ exports.corpusClusterShowResults= function (req, res) {}
 
  exports.corpusCoclusterDocTerm= function (req, res) {
 
-    /*console.log('request received');
+    console.log('request received');
     console.log(req.param('nbrowcluster'));
     var bp = JSON.parse(req.param('bipartite'));
-    console.log(bp.row_cluster_sizes);*/
+    console.log(bp.row_cluster_sizes);
     var corpus=  req.param('corpus');
     var nbrows = parseInt(req.param('nbrowcluster'));
     var nbcols = parseInt(req.param('nbcolcluster'));
@@ -51,14 +51,14 @@ exports.corpusClusterShowResults= function (req, res) {}
     var terms_with_best_scores = [];
     var docs_with_best_scores = [];
     console.log('corpus');
-    blobSvc.getBlobToText("test","BipartiteNewFormat",
+    /*blobSvc.getBlobToText("test","BipartiteNewFormat",
     function(err, bipartite, blob) {
         if (err) {
             console.error("Couldn't download blob %s", "Bipartite blob");
             console.error(err);
         } else {
-            console.log("Sucessfully downloaded blob %s", "Bipartite blob");
-            var json = JSON.parse(bipartite)
+            console.log("Sucessfully downloaded blob %s", "Bipartite blob");*/
+            var json = bp;
             for (top in json.col_cluster_info){
                  topDocs.push(json.col_cluster_info[top].top_docs);
                  docs_with_best_scores.push(json.col_cluster_info[top].docs_with_best_scores);
@@ -69,10 +69,10 @@ exports.corpusClusterShowResults= function (req, res) {}
             }
             var jsonFinal = {"row_cluster_sizes":json.row_cluster_sizes,"col_cluster_sizes":json.col_cluster_sizes,"rowClusterJob":topDocs, "colClusterGenre":topTerms,"global_row_cluster_info":terms_with_best_scores};                       
               
-            //res.send(jsonFinal);
-            res.render('coclustering/coclusteringBipartiteDocTermVisu.jade',{graphe:JSON.stringify(jsonFinal)});
-        }
-    });
+             res.send(jsonFinal);
+            //res.render('coclustering/coclusteringBipartiteDocTermVisu.jade',{graphe:JSON.stringify(jsonFinal)});
+        //}
+   // });
 
 } 
  

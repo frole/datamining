@@ -12,6 +12,8 @@ block content
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.8.23/themes/base/jquery-ui.css" type="text/css" media="all" />
     <link href="langnet.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+    script(type='text/javascript', src='/js/biPartiteDocTerms.js')
+    <script src="http://d3js.org/d3.v3.min.js"></script>
     section(class="main-content")
       form(name="input")
             p Corpus Name
@@ -70,7 +72,27 @@ block content
                                           bipartite: evt.data,
                                       },
                                       success : function(donnee){
-                                      console.log(donnee);$
+                                          $(".main-content").empty();
+                                          $(".main-content").append('<div id="info"></div>' 
+                                                                   +'<div id="bipartite"></div>');
+                                          var sales_data = [];
+                                          for(i=1;i<=nbrows;i++){
+                                                var tempp = [];
+                                                tempp.push(i+"");
+                                                tempp.push(i+"");
+                                                tempp.push(0.14);
+                                                sales_data.push(tempp);
+                                          }
+                                          var biparti = donnee;
+                                          //var sales_data=[["1","1",0.14],["2","2",0.14],["3","3",0.14]];
+                                          var width = 700, height = 600, margin ={b:0, t:40, l:300, r:50};
+                                          var svg = d3.select("#bipartite")
+                                                      .append("svg").attr('width',width).attr('height',(height+margin.b+margin.t))
+                                                      .append("g").attr("transform","translate("+ margin.l+","+margin.t+")");
+                                          var data = [{data:bP.partData(sales_data,2), id:'SalesAttempts', header:["Doc-Clusters","Term-Clusters", "Documents/Terms "], row_cluster_sizes:biparti.row_cluster_sizes,col_cluster_sizes:biparti.col_cluster_sizes,rowClusterJob:biparti.rowClusterJob,colClusterGenre:biparti.colClusterGenre,global_row_cluster_info:biparti.global_row_cluster_info}];
+                                          bP.draw(data, svg);
+
+                                      console.log(donnee);
                                       },
                                       error: function() {
                                       alert('La requête n\'a pas abouti'); }
