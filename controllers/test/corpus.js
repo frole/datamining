@@ -37,10 +37,11 @@ exports.corpusClusterShowResults= function (req, res) {}
 }
 
 
- exports.corpusCoclusterDocTerm= function (req, res) {
+ exports.corpusTestCoclusterDocTerm= function (req, res) {
 
     console.log('request received');
     console.log(req.param('nbrowcluster'));
+    console.log(req.param('bipartite'));
     var bp = JSON.parse(req.param('bipartite'));
     console.log(bp.row_cluster_sizes);
     var corpus=  req.param('corpus');
@@ -75,5 +76,49 @@ exports.corpusClusterShowResults= function (req, res) {}
    // });
 
 } 
+
+ exports.corpusCoclusterDocTerm= function (req, res) {
+
+    
+    var corpus=  req.param('corpus');
+    var nbrows = parseInt(req.param('nbrowcluster'));
+    var nbcols = parseInt(req.param('nbcolcluster'));
+    var topDocs = [];
+    var topTerms = [];
+    var terms_with_best_scores = [];
+    var docs_with_best_scores = [];
+    console.log('corpus');
+    blobSvc.getBlobToText("test","BipartiteNewFormat",
+    function(err, bipartite, blob) {
+        if (err) {
+            console.error("Couldn't download blob %s", "Bipartite blob");
+            console.error(err);
+        } else {
+            console.log("Sucessfully downloaded blob %s", "Bipartite blob");
+            var json = bipartite;
+
+            res.render('coclustering/coclusteringBipartiteDocTermVisu.jade',{graphe:JSON.stringify(json)});
+        }
+    });
+
+} 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
  

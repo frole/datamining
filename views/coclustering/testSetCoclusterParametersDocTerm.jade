@@ -17,11 +17,11 @@ block content
     section(class="main-content")
       form(name="input")
             p Corpus Name
-            input(type="text", name="corpus" ,id="corpus", value="pubmed2")
+            input(type="text", name="corpus" ,id="corpus", value="classic3")
             p nbrowcluster
-            input(type="number", name="nbrowcluster",id="nbrows")
+            input(type="number", name="nbrowcluster",id="nbrows", value = 3)
             p nbcolcluster
-            input(type="number", name="nbcolcluster", id="nbcols")
+            input(type="number", name="nbcolcluster", id="nbcols", value = 3)
             br
             input(type="submit", id="ok", value="OK")
         br
@@ -66,7 +66,7 @@ block content
                                     websocket.close();
                                     $.ajax({
                                       type: 'GET',
-                                      url : 'http://localhost:3000/bipartiteDocsTerms', 
+                                      url : 'http://localhost:3000/testbipartiteDocsTerms', 
                                       dataType : 'json', 
                                       data : {
                                           bipartite: evt.data,

@@ -37,6 +37,10 @@ module.exports = function (app) {
            corpus.corpusCoclusterDocTerm(req,res); 
           //res.render('coclustering/coclusteringBipartiteDocTermVisu.jade');
     });
+         app.get('/testbipartiteDocsTerms', function (req, res) {
+           corpus.corpusTestCoclusterDocTerm(req,res); 
+          //res.render('coclustering/coclusteringBipartiteDocTermVisu.jade');
+    });
 
       app.get('/testStorage', function (req, res) {
           //res.render('test/test.jade');       
