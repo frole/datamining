@@ -1,4 +1,36 @@
+
 !function(){
+
+         
+
+        /************************ Dialog code **************************/
+
+         var dialog, form,
+             nbrows = $( "#nbrows" ),
+             nbcols = $( "#nbcols" ),
+             allFields = $( [] ).add( nbrows ).add( nbcols ),
+             tips = $( ".validateTips" );
+         function updateTips( t ) {
+                  tips
+                  .text( t )
+                  .addClass( "ui-state-highlight" );
+                  setTimeout(function() {tips.removeClass( "ui-state-highlight", 1500 );}, 500 );
+         }
+
+
+         function addUser() { 
+                  var valid = true;
+                  allFields.removeClass( "ui-state-error" ); 
+                  if ( valid ) {
+                     dialog.dialog( "close" );
+                  }
+                  return valid;
+         }
+         
+
+
+
+
 	var bP={};	
 	var b=30, bb=150, height=600, buffMargin=1, minHeight=14;
         var c1=[-180, 40], c2=[-100, 130], c3=[-10, 220];//Column positions of labels.
@@ -54,7 +86,7 @@
 			);
 			
 			var scaleFact=leftoverHeight/Math.max(neededHeight,1), sum=0;
-			console.log(ret);
+			//console.log(ret);
 			ret.forEach(
 				function(d){ 
 					d.percent = scaleFact*d.percent; 
@@ -163,9 +195,15 @@
 	
 	function drawEdges(data, id){
 		d3.select("#"+id).append("g").attr("class","edges").attr("transform","translate("+ b+",0)");
-
+                console.log(data);
 		d3.select("#"+id).select(".edges").selectAll(".edge")
-			.data(data.edges).enter().append("polygon").attr("class","edge")
+			.data(data.edges).enter().append("polygon").attr("class","edge").attr("i",function(d){return d.key1;}).attr("j",function(d){return d.key2;})
+                        .on("click",function(d){
+                             dialog.dialog( "open" );
+                             $("#indexBlock").empty();
+                             $("#indexBlock").append('Classic3: Bi-cluster('+ d.key1+','+d.key2+')');
+                             //alert( d.key1);alert( d.key2);})
+                         })
 			.attr("points", edgePolygon).style("fill",function(d){ return colors[d.key1];})
 			.style("opacity",0.5).each(function(d) { this._current = d; });	
 	}	
@@ -244,6 +282,39 @@
 	}
 	
 	bP.draw = function(data, svg){
+                      $(".main-content").append('<div id="dialog-form" title="Bi-cluster Co-clustering">'
+                                                                     +'<p id="indexBlock"></p>'
+                                                                     +'<form>'
+                                                                     +'<fieldset>'
+                                                                     +'<label for="nbrowcluster">nbrowcluster</label>'
+                                                                     +'<input type="number" name="nbrowcluster" id="nbrows" value=3>'
+                                                                     +'<label for="nbcolcluster">nbcolcluster</label>'
+                                                                     +'<input type="number" name="nbcolcluster" id="nbcols" value=3>'
+                                                                     +'<input type="submit" tabindex="-1" style="position:absolute; top:-1000px">'
+                                                                     +'</fieldset>'
+                                                                     +'</form>'
+                                                                     +'</div>');
+                dialog = $( "#dialog-form" ).dialog({
+                      autoOpen: false,
+                      height: 300,
+                      width: 350,
+                      modal: true,
+                      buttons: {
+                          "Submit": addUser,
+                          Cancel: function() {
+                          dialog.dialog( "close" );
+                          }
+                      },
+                      close: function() {
+                             form[ 0 ].reset();
+                             allFields.removeClass( "ui-state-error" );
+                      }
+         });
+         form = dialog.find( "form" ).on( "submit", function( event ) {
+                event.preventDefault();
+                addUser();
+         }); 
+
 		data.forEach(function(biP,s){
 			svg.append("g")
 				.attr("id", biP.id)
@@ -324,6 +395,7 @@
 			selectedBar.selectAll(".barpercent1").style('font-weight','normal');
 		});		
 	}
+
 	this.bP = bP;
 }();
 

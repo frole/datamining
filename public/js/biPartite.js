@@ -192,6 +192,7 @@ console.log(data.data[1].map(function(d){ return d3.sum(d);}));
 
 		d3.select("#"+id).select(".edges").selectAll(".edge")
 			.data(data.edges).enter().append("polygon").attr("class","edge")
+                        .on("click",function(d){ alert( d.key1);alert( d.key2);})
 			.attr("points", edgePolygon).style("fill",function(d){ return colors[d.key1];})
 			.style("opacity",0.5).each(function(d) { this._current = d; });	
 	}	
