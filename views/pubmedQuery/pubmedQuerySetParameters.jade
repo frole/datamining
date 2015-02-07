@@ -1,0 +1,49 @@
+extends ../layout
+
+block content
+    section(class="featured")
+      div(class="content-wrapper")
+          hgroup(class="title")
+              h2 Search Database
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <script src="http://jquery-ui.googlecode.com/svn/tags/latest/external/jquery.bgiframe-2.1.2.js" type="text/javascript"></script>
+    <link href = "/css/Bipartite.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.8.23/themes/base/jquery-ui.css" type="text/css" media="all" />
+    <link href="langnet.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+    section(class="main-content")
+        form(action="/pubmedQuery/getResults/", method="post")
+                label(for="query") Query : 
+                input(type="text", name="query", id="query")
+                input(type="submit", value="Search")
+                br
+                br
+                label(for="match") Match? : 
+                input(type="checkbox", name="match[]", value="ABS")
+                |Abstracts
+                input(type="checkbox", name="match[]", value="TIART")
+                |Titles
+                input(type="checkbox", name="match[]", value="TIJOU")
+                |Journals
+                input(type="checkbox", name="match[]", value="MSH")
+                |Mesh terms
+                br
+                br
+                label(for="match") Fields? : 
+                input(type="checkbox", name="field[]", value="ABS")
+                |Abstracts
+                input(type="checkbox", name="field[]", value="TIART")
+                |Titles
+                input(type="checkbox", name="field[]", value="TIJOU")
+                |Journals
+                input(type="checkbox", name="field[]", value="MSH")
+                |Mesh terms
+                br
+                br
+                label(for="query") Maximum number of fields : 
+                input(type="number", name="nbfield", id="nbfield")
+                
+         
+            
+              

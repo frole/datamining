@@ -15,6 +15,8 @@
     "less-middleware": "*",
     "nconf": "~0.6.7",
     "recaptcha": "*",
-    "socket.io": "~0.9.13"
+    "socket.io": "~0.9.13",
+    "//" : "connect-mongo",
+    "//" : "mongoose"
   }
 }

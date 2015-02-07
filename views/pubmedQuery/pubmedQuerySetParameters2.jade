@@ -1,0 +1,37 @@
+doctype html
+html
+    head
+        h1 #{title}
+    body
+        form(action="/pubmedQuery/getResults/", method="post")
+            p
+                label(for="query") Query : 
+                input(type="text", name="query", id="query" autofocus)
+                input(type="submit", value="Search")
+                br
+                br
+                label(for="match") Match? : 
+                input(type="checkbox", name="match", value="ABS")
+                |Abstracts
+                input(type="checkbox", name="match", value="TIART")
+                |Titles
+                input(type="checkbox", name="match", value="TIJOU")
+                |Journals
+                input(type="checkbox", name="match", value="MSH")
+                |Mesh terms
+                br
+                br
+                label(for="match") Fields? : 
+                input(type="checkbox", name="field", value="ABS")
+                |Abstracts
+                input(type="checkbox", name="field", value="TIART")
+                |Titles
+                input(type="checkbox", name="field", value="TIJOU")
+                |Journals
+                input(type="checkbox", name="field", value="MSH")
+                |Mesh terms
+                br
+                br
+                label(for="query") Maximum number of fields : 
+                input(type="number", name="nbfield", id="nbfield" autofocus)
+                

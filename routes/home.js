@@ -6,6 +6,8 @@ module.exports = function (app) {
     var testCommunications = require('../controllers/test/communications')
     var testCommunicationsWs = require('../controllers/test/communications-ws')
 
+    var testDB = require('../controllers/db/testDB')
+
     // home page
     app.get('/', function (req, res) {
         res.render('index', { title: 'Home Page.  ' })
@@ -27,9 +29,9 @@ module.exports = function (app) {
         app.get('/setParametersDocTerm', function (req, res) {
           res.render('coclustering/setCoclusterParametersDocTerm.jade');
     });
-        app.get('/testSetParametersDocTerm', function (req, res) {
+       /* app.get('/testSetParametersDocTerm', function (req, res) {
           res.render('coclustering/testSetCoclusterParametersDocTerm.jade');
-    });
+    });  */
         app.get('/bipartiteRecom', function (req, res) {
           res.render('coclustering/coclusteringBipartiteVisu.jade');
     });
@@ -57,6 +59,10 @@ module.exports = function (app) {
           //res.render('test/test.jade');       
           testCommunicationsWs.wsFunction(req,res);
     });
+
+   app.get('/testDB', function (req, res) {
+          testDB.loadResults(req,res);
+    }); 
   
 }
 
