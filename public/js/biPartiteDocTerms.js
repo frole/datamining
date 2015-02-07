@@ -1,7 +1,24 @@
 
 !function(){
 
+
          
+
+
+
+        var host="localhost";
+        var port=8888;
+        var uri="/ws";
+        var ws;
+	var bP={};	
+	var b=30, bb=150, height=600, buffMargin=1, minHeight=14;
+        var c1=[-180, 40], c2=[-100, 130], c3=[-10, 220];//Column positions of labels.
+	var colors =["#3366CC", "#DC3912",  "#FF9900","#109618", "#990099", "#0099C6"];
+    
+        var jobgenre = ["Docs","Terms"];
+
+
+             
 
         /************************ Dialog code **************************/
 
@@ -18,27 +35,93 @@
          }
 
 
-         function addUser() { 
-                  var valid = true;
+         function addUser(evt) { 
+                  //var corpus=   $("#corpus").val();
+                  var corpus = "classic3";
+                  var nbrows = $("#nbrows").val();
+                  var nbcols = $("#nbcols").val();
+                  var valid = true; 
+                  websocket = new WebSocket("ws://" + host + ":" + port + uri);
+
+                  function doSend(message){ 
+                           writeToScreen("SENT TO SERVER: " + message);  websocket.send(message);
+                  }  
+                  function writeToScreen(message) { 
+                           var pre = document.createElement("p"); 
+                               pre.style.wordWrap = "break-word";
+                               pre.innerHTML = message; output.appendChild(pre); 
+                  }  
+          
+          
+                  // HANDLERS
+                  var msg='{"corpus" :' +  '"' + corpus + '",' + '"nbrows" :' + nbrows + ','      + '"nbcols" : ' + nbcols  + '}';
+                  function onOpen(evt) { 
+                           writeToScreen("CONNECTED");
+                           doSend(msg);
+                  } 
+                  function onClose(evt) { 
+                           writeToScreen("DISCONNECTED " + evt); 
+                  }  
+                  function onMessage(evt) { 
+                           writeToScreen('<span style="color: blue;">RESPONSE FROM SERVER: ' + evt.data+'</span>');
+                           websocket.close();
+                           $.ajax({
+                                  type: 'GET',
+                                  url : 'http://localhost:3000/testbipartiteDocsTerms', 
+                                  dataType : 'json', 
+                                  data : {
+                                           bipartite: evt.data,
+                                      },
+                                  success : function(donnee){
+                                                   $(".main-content").empty();
+                                                   $(".main-content").append('<div id="info"></div>' 
+                                                                            +'<div id="bipartite"></div>'
+                                                                            +'<div id="output"></div>');
+                                            var sales_data = [];
+                                            for(i=1;i<=nbrows;i++){
+                                                var tempp = [];
+                                                tempp.push(i+"");
+                                                tempp.push(i+"");
+                                                tempp.push(0.14);
+                                                sales_data.push(tempp);
+                                            }
+                                            var biparti = donnee;
+                                            //var sales_data=[["1","1",0.14],["2","2",0.14],["3","3",0.14]];
+                                            var width = 700, height = 600, margin ={b:0, t:40, l:300, r:50};
+                                            var svg = d3.select("#bipartite")
+                                                        .append("svg").attr('width',width).attr('height',(height+margin.b+margin.t))
+                                                        .append("g").attr("transform","translate("+ margin.l+","+margin.t+")");
+                                            var data = [{data:bP.partData(sales_data,2), id:'SalesAttempts', header:["Doc-Clusters","Term-Clusters", "Documents/Terms "],  row_cluster_sizes:biparti.row_cluster_sizes,col_cluster_sizes:biparti.col_cluster_sizes,rowClusterJob:biparti.rowClusterJob,colClusterGenre:biparti.colClusterGenre,global_row_cluster_info:biparti.global_row_cluster_info}];
+                                            bP.draw(data, svg);
+
+                                  },
+                                  error: function() {
+                                              alert('La requête n\'a pas abouti'); }
+                           });
+                  } 
+                  function onError(evt) { 
+                           writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data); 
+                  } 
+          
+                  websocket.onopen = function(evt) { onOpen(evt) }; 
+                  websocket.onclose = function(evt) { onClose(evt) }; 
+                  websocket.onmessage = function(evt) { onMessage(evt) }; 
+                  websocket.onerror = function(evt) { onError(evt) };
+
+
+
+
                   allFields.removeClass( "ui-state-error" ); 
                   if ( valid ) {
                      dialog.dialog( "close" );
+                     $(this).dialog('destroy').remove()
                   }
                   return valid;
          }
-         
 
 
-
-
-	var bP={};	
-	var b=30, bb=150, height=600, buffMargin=1, minHeight=14;
-        var c1=[-180, 40], c2=[-100, 130], c3=[-10, 220];//Column positions of labels.
-	var colors =["#3366CC", "#DC3912",  "#FF9900","#109618", "#990099", "#0099C6"];
-
-        var jobgenre = ["Docs","Terms"];
 		
-		function bySortedValue(obj) {
+    function bySortedValue(obj) {
     var tuples = [];
 
     for (var key in obj) tuples.push([key, obj[key]]);
@@ -312,7 +395,7 @@
          });
          form = dialog.find( "form" ).on( "submit", function( event ) {
                 event.preventDefault();
-                addUser();
+                addUser(event);
          }); 
 
 		data.forEach(function(biP,s){
