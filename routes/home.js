@@ -29,9 +29,13 @@ module.exports = function (app) {
         app.get('/setParametersDocTerm', function (req, res) {
           res.render('coclustering/setCoclusterParametersDocTerm.jade');
     });
-        app.get('/testSetParametersDocTerm', function (req, res) {
-          res.render('coclustering/testSetCoclusterParametersDocTerm.jade');
+        app.get('/test/coclustering/docterms/setParameters', function (req, res) {  
+          res.render('test/coclustering/docterms/setParameters.jade');
     });  
+
+   
+
+
         app.get('/bipartiteRecom', function (req, res) {
           res.render('coclustering/coclusteringBipartiteVisu.jade');
     });
