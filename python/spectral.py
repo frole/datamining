@@ -96,7 +96,7 @@ def testSpectral(corpus,nbrows,nbcols) :
                 print  "r_indices length" , len(r_indices)
                 c_indices=cocluster.get_indices(k)[1]
                 print  "c_indices length" , len(c_indices)
-                m=sp.lil_matrix((X.shape[0],X.shape[1])) # lil accepte affectation discontinue avec syntaxe zip ...
+                m=sp.lil_matrix((X.shape[0],X.shape[1])) 
                 print  "creating matrix" , m.shape
                 m[r_indices[:,np.newaxis], c_indices]=X_tfidf[r_indices[:,np.newaxis], c_indices]
                 print "m.nnz" ,  m.nnz
