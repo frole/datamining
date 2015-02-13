@@ -32,25 +32,21 @@ def blobExists(blsvc, containerName, blobName) :
             return True
     return False
 
-# http://localhost:3000/testSetParametersDocTerm
+
+def fileExists(filePath) :
+    if os.path.exists(filePath) :
+            return True
+    else :
+        return False
+
+
+# http://localhost:3000/test/coclustering/docterms/setParameters
 def testSpectral(corpus,nbrows,nbcols) :
     
     nbClust=nbrows
 
-    with open('./config.json') as cfg  :
-        config=json.load(cfg)
-    name=config["STORAGE_NAME"] 
-    key=config["STORAGE_KEY"]
-    container=config["CONTAINER"]
+    matlabdoc=loadmat("../data/%s.mat" % corpus  )
 
-    blsvc=BlobService(name,key)
-
-    txt=blsvc.get_blob(container, 'data/' + corpus + '.mat')
-
-    with open("temp/temp.mat","wb") as f:
-        f.write(txt)
-
-    matlabdoc=loadmat("temp/temp.mat")
 
     for k in matlabdoc.keys() :
         if k == "A" :
@@ -94,7 +90,7 @@ def testSpectral(corpus,nbrows,nbcols) :
     X_tfidf=X_tfidf.tocsc()  # csc seule matrice a accepter des extractions de blocs discontinus
 
     for k in range(nbClust) :
-        if not (blobExists(blsvc, container, 'data/' + corpus + "-nbclust-" + str(nbClust) + '-cluster-' + str(k)+ '.mat')) :
+        if not (fileExists('data/' + corpus + "-nbclust-" + str(nbClust) + '-cluster-' + str(k)+ '.mat')) :
                 print  "======= building matrix for co-cluster", k
                 r_indices=cocluster.get_indices(k)[0]
                 print  "r_indices length" , len(r_indices)
@@ -103,33 +99,25 @@ def testSpectral(corpus,nbrows,nbcols) :
                 m=sp.lil_matrix((X.shape[0],X.shape[1])) # lil accepte affectation discontinue avec syntaxe zip ...
                 print  "creating matrix" , m.shape
                 m[r_indices, c_indices]=X_tfidf[r_indices[:,np.newaxis], c_indices]
-    ##            print  r_indices[:,np.newaxis]
-    ##            print  X_tfidf[1, c_indices]
                 print "m.nnz" ,  m.nnz
                 m=m.tocsc()
-                savemat('temp/temp.mat', {'a' : m})
-                txt=file('temp/temp.mat').read()
-                blsvc.put_blob(container ,'data/' + corpus + "-nbclust-" + str(nbClust) + '-cluster-' + str(k)+ '.mat' , txt,\
-                               x_ms_blob_type = "BlockBlob")
+                savemat('../data/' + corpus + "-nbclust-" + str(nbClust) + '-cluster-' + str(k)+ '.mat', {'a' : m})
+                
         else :
             print  "======= loading matrix for co-cluster", k
-            txt= blsvc.get_blob(container,'data/' + corpus + "-nbclust-" + str(nbClust) +  '-cluster-' + str(k)  + '.mat' )
-            with open("temp/temp.mat","wb") as f:
-                f.write(txt)
-            m=loadmat("temp/temp.mat")['a']
+            m=loadmat('../data/' + corpus + "-nbclust-" + str(nbClust) + '-cluster-' + str(k)+ '.mat')['a']
         matrices[k]=m
         
 
     
 
 
-    conflictWords=dict()
+    conflictWords=dict() # ???
     X_tfidf.data[X_tfidf.data>0]=1 # clip to compute MI scores below
     miScores=np.zeros((nbClust,X_tfidf.shape[1]), dtype=float)
-    txt=blsvc.get_blob(container, 'data/smartStopwords.txt')
-    stopwords=txt.split()
-
-    
+    with open('../data/smartStopwords.txt','r') as f :
+        txt=f.read()
+        stopwords=txt.split()
 
     nbTerms=15
 
@@ -324,6 +312,306 @@ def testSpectral(corpus,nbrows,nbcols) :
 
     r =json.dumps(resp)
     return r
+
+
+
+if __name__ == "__main__":
+    print fileExists("../data/classic3.mat")
+    
+
+
+# http://localhost:3000/test/coclustering/docterms/setParameters
+##def testSpectral(corpus,nbrows,nbcols) :
+##    
+##    nbClust=nbrows
+##
+##    with open('./config.json') as cfg  :
+##        config=json.load(cfg)
+##    name=config["STORAGE_NAME"] 
+##    key=config["STORAGE_KEY"]
+##    container=config["CONTAINER"]
+##
+##    blsvc=BlobService(name,key)
+##
+##    txt=blsvc.get_blob(container, 'data/' + corpus + '.mat')
+##
+##    with open("temp/temp.mat","wb") as f:
+##        f.write(txt)
+##
+##    matlabdoc=loadmat("temp/temp.mat")
+##
+##    for k in matlabdoc.keys() :
+##        if k == "A" :
+##            X=matlabdoc[k]
+##            print  X.shape
+##        elif k =="labels" :
+##            y_true=[ x[0] for x in matlabdoc[k]]
+##            print  "classification" , len(y_true)
+##            #print  y_true
+##            
+##        elif k=="ms" :
+##            feature_names=matlabdoc[k]
+##            print  "feature names" , len(feature_names)
+##            print  type(feature_names[10])
+##        elif k=="ts" :
+##            document_names=matlabdoc[k]
+##            print  "doc names" , len(document_names)
+##
+##    
+##
+##    target_names=['cisi','cran','med']
+##
+##    transformer = TfidfTransformer()
+##    X_tfidf = transformer.fit_transform(X)
+##
+##    cocluster = SpectralCoclustering(n_clusters=nbClust,
+##                                     svd_method='arpack', random_state=0)
+##    ##kmeans = MiniBatchKMeans(n_clusters=3, batch_size=20000,
+##    ##                         random_state=0)
+##
+##    #//////
+##    print  "Coclustering..."
+##    start_time = time()
+##    cocluster.fit(X_tfidf)
+##    print  "length of cocluster row_labels_" , len(cocluster.row_labels_)
+##
+##    # ////////////////////////////////////////////
+##    # Construire ou relire sous-matrices et les mettre dans liste matrices
+##
+##    matrices=dict()
+##    X_tfidf=X_tfidf.tocsc()  # csc seule matrice a accepter des extractions de blocs discontinus
+##
+##    for k in range(nbClust) :
+##        if not (blobExists(blsvc, container, 'data/' + corpus + "-nbclust-" + str(nbClust) + '-cluster-' + str(k)+ '.mat')) :
+##                print  "======= building matrix for co-cluster", k
+##                r_indices=cocluster.get_indices(k)[0]
+##                print  "r_indices length" , len(r_indices)
+##                c_indices=cocluster.get_indices(k)[1]
+##                print  "c_indices length" , len(c_indices)
+##                m=sp.lil_matrix((X.shape[0],X.shape[1])) # lil accepte affectation discontinue avec syntaxe zip ...
+##                print  "creating matrix" , m.shape
+##                m[r_indices, c_indices]=X_tfidf[r_indices[:,np.newaxis], c_indices]
+##    ##            print  r_indices[:,np.newaxis]
+##    ##            print  X_tfidf[1, c_indices]
+##                print "m.nnz" ,  m.nnz
+##                m=m.tocsc()
+##                savemat('temp/temp.mat', {'a' : m})
+##                txt=file('temp/temp.mat').read()
+##                blsvc.put_blob(container ,'data/' + corpus + "-nbclust-" + str(nbClust) + '-cluster-' + str(k)+ '.mat' , txt,\
+##                               x_ms_blob_type = "BlockBlob")
+##        else :
+##            print  "======= loading matrix for co-cluster", k
+##            txt= blsvc.get_blob(container,'data/' + corpus + "-nbclust-" + str(nbClust) +  '-cluster-' + str(k)  + '.mat' )
+##            with open("temp/temp.mat","wb") as f:
+##                f.write(txt)
+##            m=loadmat("temp/temp.mat")['a']
+##        matrices[k]=m
+##        
+##
+##    
+##
+##
+##    conflictWords=dict()
+##    X_tfidf.data[X_tfidf.data>0]=1 # clip to compute MI scores below
+##    miScores=np.zeros((nbClust,X_tfidf.shape[1]), dtype=float)
+##    txt=blsvc.get_blob(container, 'data/smartStopwords.txt')
+##    stopwords=txt.split()
+##
+##    
+##
+##    nbTerms=15
+##
+##
+##    # Response Structure   <================================================================
+##    row_cluster_sizes= list()     # [217,140,195,172,125,94];
+##    col_cluster_sizes=list()
+##    row_cluster_info= []
+##    col_cluster_info= []
+##    resp=dict()  # contains all the above info 
+##    
+##    # ///////  MI SCORES FOR TERMS + global stats =======
+##    for k in matrices :
+##               
+##        m=matrices[k]
+##        
+##        print  "submatrix has {} nnz)".format(m.nnz)
+##        print  "submatrix has {} rows)".format(len(np.unique(np.nonzero(m)[0])))
+##        print  "submatrix has {} cols)".format(len(np.unique(np.nonzero(m)[1])))
+##        print  "subm atrix shape" , m.shape
+##        print
+##        
+##        # // prepare global stats here
+##        row_cluster_sizes.append(len(np.unique(np.nonzero(m)[0])))
+##        col_cluster_sizes.append(len(np.unique(np.nonzero(m)[1])))
+##
+##        print
+##        print
+##        print "=======  MI SCORES FOR TERMS FOR CO-CLUSTER" ,k
+##        m.data[m.data>0]=1  # first, clip ; X_TFIDF has already been clipped
+##        print "Matrix m for cocluster %d ****" % k
+##
+##        cran=0.
+##        cisi=0.
+##        med=0.
+##        docsInsim=len(np.unique(m.nonzero()[0]))
+##        print "nb docs in sim"
+##        for d in np.unique(m.nonzero()[0]) :
+##            if d < 1033 :
+##                med+=1
+##            elif d < 2493 :
+##                cisi+=1
+##            else :
+##                cran+=1
+##
+##        print "cran" , cran / docsInsim , "%"
+##        print "med" , med / docsInsim , "%"
+##        print "cisi" , cisi/ docsInsim , "%"
+##
+##
+##        nbDocsInCluster=float(len(np.unique(m.nonzero()[0]) ) )# nbDocs in this submatrix
+##        nbDocs=float(X_tfidf.shape[0])
+##        print("   nbDocsInCluster {} nbDocs {}".format(nbDocsInCluster, nbDocs))
+##        for t in np.unique(m.nonzero()[1]) :
+##            n_11=float(m[:,t].sum()) # nb docs avec t et dans k
+##            n_01= float(nbDocsInCluster - n_11) # nb docs sans t mais dans k
+##            n_10= float(X_tfidf[:,t].sum() - n_11 )# nb docs avec t mais hors de k
+##            n_00= float( int(nbDocs -  nbDocsInCluster - n_10 ) ) # nb docs hors de k et sans t
+##            epsi=float(1e-14)
+##            n_1d=n_11 +  n_10
+##            n_d1=n_11 + n_01  # en fait, pas a calculer pour chqe terme
+##            n_0d=n_01 + n_00
+##            n_d0=n_00 + n_10  # pas a calculer pour chqe terme
+##        
+##
+##            if n_11 == 0 : n_11 =epsi
+##            denom= n_1d * n_d1
+##            if denom == 0 : denom = epsi
+##            v_11= (n_11 /nbDocs)  * ( np.log2( (nbDocs * n_11) / denom ) )
+##    
+##
+##            if n_01 == 0 : n_01 =epsi
+##            denom= n_0d * n_d1
+##            if denom == 0 : denom = epsi
+##            v_01= (n_01/nbDocs) * ( np.log2( (nbDocs * n_01) / denom ))
+##   
+##        
+##            if n_10 == 0 : n_10 =epsi
+##            denom=n_1d * n_d0
+##            if denom == 0. : denom = epsi
+##            v_10= (n_10/nbDocs) * ( np.log2( (nbDocs * n_10) / denom))
+##    
+##        
+##            if n_00 == 0 : n_00 +=epsi
+##            denom= n_0d * n_d0 
+##            if denom == 0. : denom = epsi
+##            v_00= (n_00/nbDocs) * ( np.log2( (nbDocs * n_00) / denom ))
+##    
+##
+##            miScores[k,t]= v_11 + v_01 + v_10 + v_00
+##        
+##
+##        # response = object with 4 fields : row_cluster_sizes , col_cluster_sizes,
+##        #                                   row_cluster_info, col_cluster_info
+##        
+##        clust_prop_dic=dict()
+##
+##
+##        # global_col_cluster_info": [{"top_docs": ["doc15", "doc38", "doc10"],
+##        # "docs_with_best_scores": {"doc10": 0.055, "doc122": 0.0... } , {idem for cluster2}, ... ]
+##
+##        max_to_examine=50 # retain the lim last ones as candidates (max scores)
+##        max_to_keep=15 # retain the lim last ones as candidates (max scores)
+##        best_candidates=np.argsort(miScores[k,:])[:-max_to_examine:-1]
+##        nb_kept=0
+##        for t in  best_candidates :
+##                if nb_kept >= max_to_keep : break
+##                if len(feature_names[t][0][0]) < 3 : continue
+##                if feature_names[t][0][0].endswith("ed") : continue
+##                if feature_names[t][0][0].endswith("ly") : continue
+##                if feature_names[t][0][0].endswith("ing") : continue
+##                if feature_names[t][0][0] in stopwords : continue
+##                nb_kept+=1
+##                clust_prop_dic[feature_names[t][0][0] ] = float("{:.3f}".format(miScores[k,t]))
+##        k_cluster_object=dict()
+##        sorted_term_score_tuples=sorted(clust_prop_dic.iteritems(), key=itemgetter(1), reverse=True)
+##        k_cluster_object["top_terms"]= [  t[0] for t in sorted_term_score_tuples[:3] ]
+##        k_cluster_object["terms_with_best_scores"]=clust_prop_dic
+##        row_cluster_info.append(k_cluster_object) # add info for kth cluster
+##
+##    # ///////  MI SCORES FOR DOCS =======
+##
+##    miScores=np.zeros((nbClust,X_tfidf.shape[0]), dtype=float) 
+##    for k in matrices :
+##        print 
+##        
+##        m=matrices[k]                          
+##
+##        print
+##        print
+##        print "=======  MI SCORES FOR DOCS ======="
+##        m.data[m.data>0]=1  # first, clip ; X_TFIDF has already been clipped
+##        print "Matrix m for cocluster %d ****" % k
+##        
+##        nbTermsInCluster=float(len(np.unique(m.nonzero()[1]) ) )# nbDocs in this submatrix
+##        nbTerms=float(X_tfidf.shape[1])
+##        print("   nbtermsInCluster {} nbterms {}".format(nbTermsInCluster, nbTerms))
+##        # Var_1 = terme dans d = 1 sinon 0
+##        # Var_2 = terme dans T = 1 sinon 0
+##        for d in np.unique(m.nonzero()[0]) :
+##            n_11=float(m[d,:].sum()) # nb termes dans d et dans (cluster de termes) k
+##            n_01= float(nbTermsInCluster - n_11) # nb termes hors de d mais dans k
+##            n_10= float(X_tfidf[d ,:].sum() - n_11 )# nb termes dans d mais hors de k
+##            n_00= float( int(nbTerms -  nbTermsInCluster - n_10 ) ) # nb termes hors de d et hors de k
+##            epsi=float(1e-14)
+##            n_1d=n_11 +  n_10  # nb termes dans d
+##            n_d1=n_11 + n_01  # nb termes dans k = nbTermsInCluster
+##            n_0d=n_01 + n_00
+##            n_d0=n_00 + n_10
+##
+##            if n_11 == 0 : n_11 =epsi
+##            denom= n_1d * n_d1
+##            if denom == 0 : denom = epsi
+##            v_11= (n_11 /nbTerms)  * ( np.log2( (nbTerms * n_11) / denom ) )
+##
+##            if n_01 == 0 : n_01 =epsi
+##            denom= n_0d * n_d1
+##            if denom == 0 : denom = epsi
+##            v_01= (n_01/nbTerms) * ( np.log2( (nbTerms * n_01) / denom ))
+##
+##        
+##            if n_10 == 0 : n_10 =epsi
+##            denom=n_1d * n_d0
+##            if denom == 0. : denom = epsi
+##            v_10= (n_10/nbTerms) * ( np.log2( (nbTerms * n_10) / denom))
+##        
+##            if n_00 == 0 : n_00 +=epsi
+##            denom= n_0d * n_d0 
+##            if denom == 0. : denom = epsi
+##            v_00= (n_00/nbTerms) * ( np.log2( (nbTerms * n_00) / denom ))
+##
+##
+##            miScores[k,d]= v_11 + v_01 + v_10 + v_00
+##        clust_prop_dic=dict()
+##        max_to_keep=15 # retain the lim last ones as candidates (max scores)
+##        best_candidates=np.argsort(miScores[k,:])[:-max_to_keep:-1]
+##
+##        for d in  best_candidates :
+##            clust_prop_dic[ "doc-" + str(d) ] = float("{:.3f}".format(miScores[k,d]))
+##        k_cluster_object=dict()
+##        sorted_term_score_tuples=sorted(clust_prop_dic.iteritems(), key=itemgetter(1), reverse=True)
+##        k_cluster_object["top_docs"]= [  t[0] for t in sorted_term_score_tuples[:3] ]
+##        k_cluster_object["docs_with_best_scores"]=clust_prop_dic
+##        col_cluster_info.append(k_cluster_object) # add info for kth cluster
+##       
+##    resp['col_cluster_sizes']=col_cluster_sizes
+##    resp['row_cluster_sizes']=row_cluster_sizes
+##    resp['row_cluster_info']= row_cluster_info
+##    resp['col_cluster_info']= col_cluster_info
+##
+##
+##
+##    r =json.dumps(resp)
+##    return r
 
 ##    # //// Select docs closest to centroid - new  ////////////////
 ##    # /////////////////////////////////////////////////////
