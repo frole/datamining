@@ -5,6 +5,7 @@ module.exports = function (app) {
     var testStorage = require('../controllers/test/storage')
     var testCommunications = require('../controllers/test/communications')
     var testCommunicationsWs = require('../controllers/test/communications-ws')
+    var testCoclusteringDoctermsGetResults = require('../controllers/test/coclustering/docterms/getResults')
 
     var testDB = require('../controllers/db/testDB')
 
@@ -43,8 +44,12 @@ module.exports = function (app) {
            corpus.corpusCoclusterDocTerm(req,res); 
           //res.render('coclustering/coclusteringBipartiteDocTermVisu.jade');
     });
-         app.get('/testbipartiteDocsTerms', function (req, res) {
-           corpus.corpusTestCoclusterDocTerm(req,res); 
+         //app.get('/test/coclustering/docterms/getResults', function (req, res) {
+           //testCoclusteringDoctermsGetResults.corpusTestCoclusterDocTerm(req,res); 
+          //res.render('coclustering/coclusteringBipartiteDocTermVisu.jade');
+    //});
+         app.post('/test/coclustering/docterms/getResults', function (req, res) {
+           testCoclusteringDoctermsGetResults.getResults(req,res); 
           //res.render('coclustering/coclusteringBipartiteDocTermVisu.jade');
     });
 

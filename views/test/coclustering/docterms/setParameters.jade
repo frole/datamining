@@ -19,7 +19,7 @@ block content
     script(type='text/javascript', src='/js/biPartiteDocTerms.js')
     <script src="http://d3js.org/d3.v3.min.js"></script>
     section(class="main-content")
-      form(name="input")
+      form(name="input", action='/test/coclustering/docterms/getResults', method='POST')
             p Corpus Name
             input(type="text", name="corpus" ,id="corpus", value="classic3")
             p nbrowcluster
@@ -29,89 +29,3 @@ block content
             br
             input(type="submit", id="ok", value="OK")
         br
-
-      h2 Response
-      div( id="output")
-    script.
-      $(document).ready(function () {
-      
-         var host="localhost";
-         var port=8888;
-         var uri="/ws";
- 
-         var ws;
-         $("#ok").click(function(evt) {
-           evt.preventDefault();
-           alert("OK pressed for " +  "ws://" + host + ":" + port + uri );
-           var corpus=   $("#corpus").val();
-           var nbrows = $("#nbrows").val();
-           var nbcols = $("#nbcols").val();
- 
-           websocket = new WebSocket("ws://" + host + ":" + port + uri);
-          
-           //SUPPORT FUNCTIONS 
-           function doSend(message) { writeToScreen("SENT TO SERVER: " + message);  websocket.send(message);
-           }  
-           function writeToScreen(message) { var pre = document.createElement("p"); 
-                                             pre.style.wordWrap = "break-word";
-                         pre.innerHTML = message; output.appendChild(pre); 
-           }  
-          
-          
-           // HANDLERS
-           var msg='{"corpus" :' +  '"' + corpus + '",' + '"nbrows" :' + nbrows + ','      + '"nbcols" : ' + nbcols  + '}';
-           function onOpen(evt) { writeToScreen("CONNECTED");
-                                 doSend(msg);
-           } 
-           function onClose(evt) { writeToScreen("DISCONNECTED " + evt); 
-           }  
-           function onMessage(evt) { 
-                                    writeToScreen('<span style="color: blue;">RESPONSE FROM SERVER: ' + evt.data+'</span>');
-                                    websocket.close();
-                                    $.ajax({
-                                      type: 'GET',
-                                      url : 'http://localhost:3000/testbipartiteDocsTerms', 
-                                      dataType : 'json', 
-                                      data : {
-                                          bipartite: evt.data,
-                                      },
-                                      success : function(donnee){
-                                          $(".main-content").empty();
-                                          $(".main-content").append('<div id="info"></div>' 
-                                                                   +'<div id="bipartite"></div>'
-                                                                   +'<div id="output"></div>'
-                                                                  );
-                                          var sales_data = [];
-                                          for(i=1;i<=nbrows;i++){
-                                                var tempp = [];
-                                                tempp.push(i+"");
-                                                tempp.push(i+"");
-                                                tempp.push(0.14);
-                                                sales_data.push(tempp);
-                                          }
-                                          var biparti = donnee;
-                                          //var sales_data=[["1","1",0.14],["2","2",0.14],["3","3",0.14]];
-                                          var width = 700, height = 600, margin ={b:0, t:40, l:300, r:50};
-                                          var svg = d3.select("#bipartite")
-                                                      .append("svg").attr('width',width).attr('height',(height+margin.b+margin.t))
-                                                      .append("g").attr("transform","translate("+ margin.l+","+margin.t+")");
-                                          var data = [{data:bP.partData(sales_data,2), id:'SalesAttempts', header:["Doc-Clusters","Term-Clusters", "Documents/Terms "], row_cluster_sizes:biparti.row_cluster_sizes,col_cluster_sizes:biparti.col_cluster_sizes,rowClusterJob:biparti.rowClusterJob,colClusterGenre:biparti.colClusterGenre,global_row_cluster_info:biparti.global_row_cluster_info}];
-                                          bP.draw(data, svg);
-
-                                      },
-                                      error: function() {
-                                      alert('La requête n\'a pas abouti'); }
-                                    });
-           } 
-           function onError(evt) { writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data); 
-           } 
-          
-           websocket.onopen = function(evt) { onOpen(evt) }; 
-           websocket.onclose = function(evt) { onClose(evt) }; 
-           websocket.onmessage = function(evt) { onMessage(evt) }; 
-           websocket.onerror = function(evt) { onError(evt) }; 
-           });
- 
-       });
-
-

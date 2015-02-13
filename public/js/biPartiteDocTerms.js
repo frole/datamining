@@ -67,7 +67,7 @@
                            websocket.close();
                            $.ajax({
                                   type: 'GET',
-                                  url : 'http://localhost:3000/testbipartiteDocsTerms', 
+                                  url : 'http://localhost:3000/test/coclustering/docterms/getResults', 
                                   dataType : 'json', 
                                   data : {
                                            bipartite: evt.data,
