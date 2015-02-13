@@ -19,8 +19,16 @@ block content
     #dialog-bloc
   script.
     var biparti = !{graphe};
+    var nbrows = #{nbrows}
     //alert(biparti.rowClusterProp);
-    var sales_data=[["1","1",0.14],["2","2",0.18],["3","3",0.14]];
+    var sales_data = [];
+    for(i=1;i<=nbrows;i++){
+        var tempp = [];
+        tempp.push(i+"");
+        tempp.push(i+"");
+        tempp.push(0.14);
+        sales_data.push(tempp);
+    }
     var width = 700, height = 600, margin ={b:0, t:40, l:300, r:50};
     var svg = d3.select("#bipartite")
                 .append("svg").attr('width',width).attr('height',(height+margin.b+margin.t))

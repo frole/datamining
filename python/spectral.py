@@ -90,7 +90,7 @@ def testSpectral(corpus,nbrows,nbcols) :
     X_tfidf=X_tfidf.tocsc()  # csc seule matrice a accepter des extractions de blocs discontinus
 
     for k in range(nbClust) :
-        if not (fileExists('data/' + corpus + "-nbclust-" + str(nbClust) + '-cluster-' + str(k)+ '.mat')) :
+        if not (fileExists('../data/' + corpus + "-nbclust-" + str(nbClust) + '-cluster-' + str(k)+ '.mat')) :
                 print  "======= building matrix for co-cluster", k
                 r_indices=cocluster.get_indices(k)[0]
                 print  "r_indices length" , len(r_indices)
@@ -98,7 +98,7 @@ def testSpectral(corpus,nbrows,nbcols) :
                 print  "c_indices length" , len(c_indices)
                 m=sp.lil_matrix((X.shape[0],X.shape[1])) # lil accepte affectation discontinue avec syntaxe zip ...
                 print  "creating matrix" , m.shape
-                m[r_indices, c_indices]=X_tfidf[r_indices[:,np.newaxis], c_indices]
+                m[r_indices[:,np.newaxis], c_indices]=X_tfidf[r_indices[:,np.newaxis], c_indices]
                 print "m.nnz" ,  m.nnz
                 m=m.tocsc()
                 savemat('../data/' + corpus + "-nbclust-" + str(nbClust) + '-cluster-' + str(k)+ '.mat', {'a' : m})

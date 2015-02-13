@@ -68,7 +68,7 @@ exports.corpusClusterShowResults= function (req, res) {}
                  topTerms.push(json.row_cluster_info[top].top_terms);
                  terms_with_best_scores.push(json.row_cluster_info[top].terms_with_best_scores);
             }
-            var jsonFinal = {"row_cluster_sizes":json.row_cluster_sizes,"col_cluster_sizes":json.col_cluster_sizes,"rowClusterJob":topDocs, "colClusterGenre":topTerms,"global_row_cluster_info":terms_with_best_scores};                       
+            var jsonFinal = {"row_cluster_sizes":json.row_cluster_sizes,"col_cluster_sizes":json.col_cluster_sizes,"rowClusterJob":topDocs, "colClusterGenre":topTerms,"global_row_cluster_info":terms_with_best_scores};                      
               
              res.send(jsonFinal);
             //res.render('coclustering/coclusteringBipartiteDocTermVisu.jade',{graphe:JSON.stringify(jsonFinal)});
@@ -130,8 +130,9 @@ function cocluster(res, corpus , nbrows  , nbcols) {
                                          topTerms.push(json.row_cluster_info[top].top_terms);
                                          terms_with_best_scores.push(json.row_cluster_info[top].terms_with_best_scores);
                                     }
-                                    var jsonFinal = {"row_cluster_sizes":json.row_cluster_sizes,"col_cluster_sizes":json.col_cluster_sizes,"rowClusterJob":topDocs,        "colClusterGenre":topTerms,"global_row_cluster_info":terms_with_best_scores};    
-                                    res.render('coclustering/coclusteringBipartiteDocTermVisu.jade',{graphe:JSON.stringify(jsonFinal)}); 
+                                    var jsonFinal = {"row_cluster_sizes":json.row_cluster_sizes,"col_cluster_sizes":json.col_cluster_sizes,"rowClusterJob":topDocs,        "colClusterGenre":topTerms,"global_row_cluster_info":terms_with_best_scores}; 
+                                    //res.send(jsonFinal);    
+                                    res.render('coclustering/coclusteringBipartiteDocTermVisu.jade',{graphe:JSON.stringify(jsonFinal),nbrows:nbrows}); 
                                     websocket.close();
            }
            function onError(evt) {console.log(evt.data); 
