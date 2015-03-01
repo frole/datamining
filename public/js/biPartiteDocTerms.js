@@ -41,36 +41,15 @@
                   var nbrows = $("#nbrows").val();
                   var nbcols = $("#nbcols").val();
                   var valid = true; 
-                  websocket = new WebSocket("ws://" + host + ":" + port + uri);
-
-                  function doSend(message){ 
-                           writeToScreen("SENT TO SERVER: " + message);  websocket.send(message);
-                  }  
-                  function writeToScreen(message) { 
-                           var pre = document.createElement("p"); 
-                               pre.style.wordWrap = "break-word";
-                               pre.innerHTML = message; output.appendChild(pre); 
-                  }  
-          
-          
-                  // HANDLERS
-                  var msg='{"corpus" :' +  '"' + corpus + '",' + '"nbrows" :' + nbrows + ','      + '"nbcols" : ' + nbcols  + '}';
-                  function onOpen(evt) { 
-                           writeToScreen("CONNECTED");
-                           doSend(msg);
-                  } 
-                  function onClose(evt) { 
-                           writeToScreen("DISCONNECTED " + evt); 
-                  }  
-                  function onMessage(evt) { 
-                           writeToScreen('<span style="color: blue;">RESPONSE FROM SERVER: ' + evt.data+'</span>');
-                           websocket.close();
                            $.ajax({
-                                  type: 'GET',
+                                  type: 'POST',
                                   url : 'http://localhost:3000/test/coclustering/docterms/getResults', 
                                   dataType : 'json', 
                                   data : {
-                                           bipartite: evt.data,
+                                           corpus: corpus,
+                                           nbrowcluster: nbrows,
+                                           nbcolcluster: nbcols,
+                                           popep: true,
                                       },
                                   success : function(donnee){
                                                    $(".main-content").empty();
@@ -98,17 +77,6 @@
                                   error: function() {
                                               alert('La requête n\'a pas abouti'); }
                            });
-                  } 
-                  function onError(evt) { 
-                           writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data); 
-                  } 
-          
-                  websocket.onopen = function(evt) { onOpen(evt) }; 
-                  websocket.onclose = function(evt) { onClose(evt) }; 
-                  websocket.onmessage = function(evt) { onMessage(evt) }; 
-                  websocket.onerror = function(evt) { onError(evt) };
-
-
 
 
                   allFields.removeClass( "ui-state-error" ); 

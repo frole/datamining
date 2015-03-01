@@ -86,11 +86,16 @@ exports.corpusClusterShowResults= function (req, res) {}
       var corpus=  req.body.corpus;
       var nbrows = parseInt(req.body.nbrowcluster);
       var nbcols = parseInt(req.body.nbcolcluster);
-      cocluster(res, corpus , nbrows  , nbcols);
+      if(typeof req.body.popep !== "undefined"){
+         cocluster(res, corpus , nbrows  , nbcols, true);
+      }
+      else{
+          cocluster(res, corpus , nbrows  , nbcols, false);
+      }
   }
 
 
-function cocluster(res, corpus , nbrows  , nbcols) {  
+function cocluster(res, corpus , nbrows  , nbcols,popep) {  
 
       var WebSocket = require('ws');
 
@@ -131,8 +136,14 @@ function cocluster(res, corpus , nbrows  , nbcols) {
                                          terms_with_best_scores.push(json.row_cluster_info[top].terms_with_best_scores);
                                     }
                                     var jsonFinal = {"row_cluster_sizes":json.row_cluster_sizes,"col_cluster_sizes":json.col_cluster_sizes,"rowClusterJob":topDocs,        "colClusterGenre":topTerms,"global_row_cluster_info":terms_with_best_scores}; 
-                                    //res.send(jsonFinal);    
-                                    res.render('coclustering/coclusteringBipartiteDocTermVisu.jade',{graphe:JSON.stringify(jsonFinal),nbrows:nbrows}); 
+
+                                   if(popep){
+                                       res.send(jsonFinal);
+                                   }
+                                   else{    
+                                       res.render('coclustering/coclusteringBipartiteDocTermVisu.jade',{graphe:JSON.stringify(jsonFinal),nbrows:nbrows}); 
+                                   }
+                               
                                     websocket.close();
            }
            function onError(evt) {console.log(evt.data); 
