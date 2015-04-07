@@ -244,11 +244,14 @@ def testSpectral(corpus,nbrows,nbcols) :
         # add entries to nodes_cluster_info = add the list for the k-th cluster [{ label : "patients", id :5} ,...]
         # wordToNum = vocabulary
         best_words=[  t[0] for t in sorted_term_score_tuples[:5] ]    # list of best words
+
+        word_ids= [ wordToNum[w]  for w in best_words  ]
+        numToNum = { orig_id : idx  for idx, orig_id in enumerate(word_ids)}  # ids suitable for graph dispkay
         l=[]
         for w in best_words :
             node_record=dict()
             node_record[ "label"]=w
-            node_record[ "id"]=wordToNum[w]
+            node_record[ "id"]=numToNum[wordToNum[w]]
             node_record["color"]="#2F77B4"
             node_record["textcolor"]="#000000"
             node_record["desc"]=""
@@ -263,11 +266,11 @@ def testSpectral(corpus,nbrows,nbcols) :
             for w2 in best_words :
                 if w != w2 :
                     link_record=dict()
-                    idW=wordToNum[w]
-                    idW2=wordToNum[w2]
+                    idW=numToNum[wordToNum[w]]  # for display 
+                    idW2=numToNum[wordToNum[w2]]
                     link_record["source"] = idW
                     link_record["target"] = idW2
-                    link_record["weight"] = sim[idW,idW2]
+                    link_record["weight"] = sim[wordToNum[w],wordToNum[w2] ] # use original num for searching sim matrix
                     link_record["color"]="#1F77B4"
                     link_record["desc"]=""
                     l.append(link_record)
