@@ -60,13 +60,12 @@ def testSpectral(corpus,nbrows,nbcols) :
         elif k=="ms" :
             feature_names=matlabdoc[k]
             print  "feature names" , len(feature_names)
-            print  type(feature_names[10])
         elif k=="ts" :
             document_names=matlabdoc[k]
             print  "doc names" , len(document_names)
 
+    wordToNum =  {  e[0][0] : idx  for   idx, e in  enumerate(feature_names)}  # vocabulary
     
-
     target_names=['cisi','cran','med']
 
     transformer = TfidfTransformer()
@@ -127,6 +126,8 @@ def testSpectral(corpus,nbrows,nbcols) :
     col_cluster_sizes=list()
     row_cluster_info= []
     col_cluster_info= []
+    nodes_cluster_info= []
+    links_cluster_info= []
     resp=dict()  # contains all the above info 
     
     # ///////  MI SCORES FOR TERMS + global stats =======
@@ -238,6 +239,45 @@ def testSpectral(corpus,nbrows,nbcols) :
         k_cluster_object["terms_with_best_scores"]=clust_prop_dic
         row_cluster_info.append(k_cluster_object) # add info for kth cluster
 
+        # Standard graph
+        # Nodes
+        # add entries to nodes_cluster_info = add the list for the k-th cluster [{ label : "patients", id :5} ,...]
+        # wordToNum = vocabulary
+        best_words=[  t[0] for t in sorted_term_score_tuples[:5] ]    # list of best words
+
+        word_ids= [ wordToNum[w]  for w in best_words  ]
+        numToNum = { orig_id : idx  for idx, orig_id in enumerate(word_ids)}  # ids suitable for graph dispkay
+        l=[]
+        for w in best_words :
+            node_record=dict()
+            node_record[ "label"]=w
+            node_record[ "id"]=numToNum[wordToNum[w]]
+            node_record["color"]="#2F77B4"
+            node_record["textcolor"]="#000000"
+            node_record["desc"]=""
+            l.append(node_record)
+            
+        nodes_cluster_info.append(l)
+
+        # Links
+        sim = m.T * m
+        l=[]
+        for w in best_words :
+            for w2 in best_words :
+                if w != w2 :
+                    link_record=dict()
+                    idW=numToNum[wordToNum[w]]  # for display 
+                    idW2=numToNum[wordToNum[w2]]
+                    link_record["source"] = idW
+                    link_record["target"] = idW2
+                    link_record["weight"] = sim[wordToNum[w],wordToNum[w2] ] # use original num for searching sim matrix
+                    link_record["color"]="#1F77B4"
+                    link_record["desc"]=""
+                    l.append(link_record)
+        links_cluster_info.append(l)
+                    
+            
+
     # ///////  MI SCORES FOR DOCS =======
 
     miScores=np.zeros((nbClust,X_tfidf.shape[0]), dtype=float) 
@@ -302,21 +342,56 @@ def testSpectral(corpus,nbrows,nbcols) :
         k_cluster_object["top_docs"]= [  t[0] for t in sorted_term_score_tuples[:3] ]
         k_cluster_object["docs_with_best_scores"]=clust_prop_dic
         col_cluster_info.append(k_cluster_object) # add info for kth cluster
+
+        
+
+        
        
     resp['col_cluster_sizes']=col_cluster_sizes
     resp['row_cluster_sizes']=row_cluster_sizes
     resp['row_cluster_info']= row_cluster_info
     resp['col_cluster_info']= col_cluster_info
+    resp['nodesArray']= nodes_cluster_info    # [  [{ label : "patients", id :5} ,...]  , ... ]
+    resp['linksArray']= links_cluster_info
 
 
 
     r =json.dumps(resp)
+    print r
     return r
 
 
 
 if __name__ == "__main__":
     print fileExists("../data/classic3.mat")
+
+
+
+##topTermsGraph =  {"nodesArray" :[[
+##{ label : "patients", id : 0, color : "#1F77B4", textcolor : "#000000", size : 6, desc : "description description" },
+##{ label : "cheng", id : 1, color : "#1F77B4", textcolor : "#000000", size : 3, desc : "description description" },
+##{ label : "ratios", id : 2, color : "#1F77B4", textcolor : "#000000", size : 3, desc : "description description" },
+##{ label : "flutter", id : 3, color : "#1F77B4", textcolor : "#000000", size : 6, desc : "description description" },
+##
+##],
+##[
+##{ label : "autistic", id : 0, color : "#1F77B4", textcolor : "#000000", size : 3, desc : "description description" },
+##{ label : "crane", id : 1, color : "#1F77B4", textcolor : "#000000", size : 3, desc : "description description" },
+##{ label : "surfactant", id : 2, color : "#1F77B4", textcolor : "#000000", size : 3, desc : "description description" },
+##{ label : "indexer", id : 3, color : "#1F77B4", textcolor : "#000000", size : 3, desc : "description description" },
+##]],
+##
+##"linksArray" :[[
+##{desc : "Edge description", source : 0, target : 1, weight : 0.153149671321, color : "#cfcfff"},
+##{desc : "Edge description", source : 0, target : 3, weight : 0.636229510992, color : "#cfcfff"},
+##{desc : "Edge description", source : 2, target : 3, weight : 0.20635902519, color : "#cfcfff"},
+##],
+##[
+##{desc : "Edge description", source : 0, target : 2, weight : 0.278166183366, color : "#cfcfff"},
+##{desc : "Edge description", source : 1, target : 2, weight : 0.206282318673, color : "#cfcfff"},
+##{desc : "Edge description", source : 2, target : 3, weight : 0.313979342359, color : "#cfcfff"},
+##]]
+##}
     
 
 
