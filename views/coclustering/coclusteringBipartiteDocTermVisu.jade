@@ -5,6 +5,8 @@ block content
         hgroup(class="title")
             h2 Bipartite graph
   script(type='text/javascript', src='/js/biPartiteDocTerms.js')
+  script(type='text/javascript', src='/js/langnet.js')
+  script(type='text/javascript', src='/js/Levenshtein.js')
   <script src="http://d3js.org/d3.v3.min.js"></script>
   <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
   <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
@@ -19,8 +21,9 @@ block content
     #dialog-bloc
   script.
     var biparti = !{graphe};
+    var topTermsGraph = !{topTermsGraph};
     var nbrows = #{nbrows}
-    //alert(biparti.rowClusterProp);
+    //alert(topTermsGraph.nodesArray[0][0].label);
     var sales_data = [];
     for(i=1;i<=nbrows;i++){
         var tempp = [];

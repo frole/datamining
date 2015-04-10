@@ -105,8 +105,44 @@ function cocluster(res, corpus , nbrows  , nbcols,popep) {
 
       var websocket = new WebSocket("ws://" + host + ":" + port + uri);
 
+      /***************************************************************************************/
+      /********************** graphe top terms en dure provisoir!!!! *************************/
+      /***************************************************************************************/
 
-      //SUPPORT FUNCTIONS 
+       var topTermsGraph =  {"nodesArray" :[[
+{ label : "patients", id : 0, color : "#1F77B4", textcolor : "#000000", size : 6, desc : "description description" },
+{ label : "cheng", id : 1, color : "#1F77B4", textcolor : "#000000", size : 3, desc : "description description" },
+{ label : "ratios", id : 2, color : "#1F77B4", textcolor : "#000000", size : 3, desc : "description description" },
+{ label : "flutter", id : 3, color : "#1F77B4", textcolor : "#000000", size : 6, desc : "description description" },
+],
+[
+{ label : "autistic", id : 0, color : "#1F77B4", textcolor : "#000000", size : 3, desc : "description description" },
+{ label : "crane", id : 1, color : "#1F77B4", textcolor : "#000000", size : 3, desc : "description description" },
+{ label : "surfactant", id : 2, color : "#1F77B4", textcolor : "#000000", size : 3, desc : "description description" },
+{ label : "indexer", id : 3, color : "#1F77B4", textcolor : "#000000", size : 3, desc : "description description" },
+]],
+"linksArray" :[[
+{desc : "Edge description", source : 0, target : 1, weight : 0.153149671321, color : "#cfcfff"},
+{desc : "Edge description", source : 0, target : 3, weight : 0.636229510992, color : "#cfcfff"},
+{desc : "Edge description", source : 2, target : 3, weight : 0.20635902519, color : "#cfcfff"},
+],
+[
+{desc : "Edge description", source : 0, target : 2, weight : 0.278166183366, color : "#cfcfff"},
+{desc : "Edge description", source : 1, target : 2, weight : 0.206282318673, color : "#cfcfff"},
+{desc : "Edge description", source : 2, target : 3, weight : 0.313979342359, color : "#cfcfff"},
+]]
+};
+
+     /***********************************************************************************************/
+     /***********************************************************************************************/    
+
+
+
+
+
+
+
+           //SUPPORT FUNCTIONS 
            function doSend(message) { console.log("SENT TO SERVER: " + message );  websocket.send(message);
            }  
 
@@ -141,7 +177,7 @@ function cocluster(res, corpus , nbrows  , nbcols,popep) {
                                        res.send(jsonFinal);
                                    }
                                    else{    
-                                       res.render('coclustering/coclusteringBipartiteDocTermVisu.jade',{graphe:JSON.stringify(jsonFinal),nbrows:nbrows}); 
+                                       res.render('coclustering/coclusteringBipartiteDocTermVisu.jade',{graphe:JSON.stringify(jsonFinal),nbrows:nbrows,topTermsGraph:JSON.stringify(topTermsGraph)}); 
                                    }
                                
                                     websocket.close();

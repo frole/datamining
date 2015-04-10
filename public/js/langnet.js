@@ -221,12 +221,13 @@ function buildNetwork(indexRow,indexCol) {
 
 	var newMapping = [];
 	var k = 0;
-	var nodesArray = nodesArray1[indexRow];
-	var linksArray = linksArray1[indexRow];
+	var nodesArray = topTermsGraph.nodesArray[indexRow];
+	var linksArray = topTermsGraph.linksArray[indexRow];
 	for(var i=0; i<nodesArray.length; i++) {
 		var node = nodesArray[i];
 		var draw = true;
 		if( hideUnrelated ) {
+                        alert(getAmountLinks(i,indexRow,indexCol));
 			if( getAmountLinks(i,indexRow,indexCol) == 0 ) {
 				draw = false;
 			}
@@ -296,7 +297,7 @@ function chartChange(value,indexRow,indexCol) {
 
 function getAmountLinks(n,indexRow,indexCol) {
 	var linksAmount = 0;
-	var linksArray = linksArray1[indexRow];
+	var linksArray = topTermsGraph.linksArray[indexRow];
 	for(var j=0; j<linksArray.length; j++) {
 		var link = linksArray[j];
 		if( (link.source == n || link.target == n) && link.weight >= similarityThreshold/100.0 ) {
