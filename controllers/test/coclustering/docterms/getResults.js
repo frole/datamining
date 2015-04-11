@@ -109,7 +109,7 @@ function cocluster(res, corpus , nbrows  , nbcols,popep) {
       /********************** graphe top terms en dure provisoir!!!! *************************/
       /***************************************************************************************/
 
-       var topTermsGraph =  {"nodesArray" :[[
+       var topTermsGraph; /*=  {"nodesArray" :[[
 { label : "patients", id : 0, color : "#1F77B4", textcolor : "#000000", size : 6, desc : "description description" },
 { label : "cheng", id : 1, color : "#1F77B4", textcolor : "#000000", size : 3, desc : "description description" },
 { label : "ratios", id : 2, color : "#1F77B4", textcolor : "#000000", size : 3, desc : "description description" },
@@ -131,7 +131,7 @@ function cocluster(res, corpus , nbrows  , nbcols,popep) {
 {desc : "Edge description", source : 1, target : 2, weight : 0.206282318673, color : "#cfcfff"},
 {desc : "Edge description", source : 2, target : 3, weight : 0.313979342359, color : "#cfcfff"},
 ]]
-};
+};*/
 
      /***********************************************************************************************/
      /***********************************************************************************************/    
@@ -163,6 +163,8 @@ function cocluster(res, corpus , nbrows  , nbcols,popep) {
                                     var terms_with_best_scores = [];
                                     var docs_with_best_scores = [];
                                     var json = bp;
+                                    console.log(evt.data.nodesArray);
+                                    topTermsGraph = {"nodesArray":json.nodesArray,"linksArray":json.linksArray};
                                     for (top in json.col_cluster_info){
                                          topDocs.push(json.col_cluster_info[top].top_docs);
                                          docs_with_best_scores.push(json.col_cluster_info[top].docs_with_best_scores);

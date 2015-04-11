@@ -52,10 +52,10 @@
                                            popep: true,
                                       },
                                   success : function(donnee){
-                                                   $(".main-content").empty();
-                                                   $(".main-content").append('<div id="info"></div>' 
-                                                                            +'<div id="bipartite"></div>'
-                                                                            +'<div id="output"></div>');
+                                                   $("#bipartite").empty();
+                                                   //$(".main-content").append('<div id="info"></div>' 
+                                                                            //+'<div id="bipartite"></div>'
+                                                                            //+'<div id="output"></div>');
                                             var sales_data = [];
                                             for(i=1;i<=nbrows;i++){
                                                 var tempp = [];
@@ -245,6 +245,12 @@
 	}
 	
 	function drawEdges(data, id){
+                d3.select(".button") .on("click",function(d){
+                             dialog.dialog( "open" );
+                             $("#indexBlock").empty();
+                             $("#indexBlock").append('Classic3: Co-clustering');
+                             //alert( d.key1);alert( d.key2);})
+                         });
 		d3.select("#"+id).append("g").attr("class","edges").attr("transform","translate("+ b+",0)");
                 console.log(data);
 		d3.select("#"+id).select(".edges").selectAll(".edge")
@@ -333,7 +339,7 @@
 	}
 	
 	bP.draw = function(data, svg){
-                      $(".main-content").append('<div id="dialog-form" title="Bi-cluster Co-clustering">'
+                      $(".main-content").append('<div id="dialog-form" title="Restart Co-clustering">'
                                                                      +'<p id="indexBlock"></p>'
                                                                      +'<form>'
                                                                      +'<fieldset>'

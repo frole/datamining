@@ -111,6 +111,32 @@ svg *::selection {
         margin-right: auto;
 }  
 
+.help{
+
+margin-top: 50%;
+
+}
+
+.help li{
+
+font-family: 'Fauna One',serif;
+font-size: 12px;
+font-weight: bold;
+margin-bottom: 20px;
+
+}
+
+.howitwork{
+color: blue;
+font-size:20px;
+margin-top: 50%;
+}
+
+.button{
+color: blue;
+}
+
+
 ul {
 display: block;
 list-style-type: disc;
