@@ -52,10 +52,10 @@
                                            popep: true,
                                       },
                                   success : function(donnee){
-                                                   $(".main-content").empty();
-                                                   $(".main-content").append('<div id="info"></div>' 
-                                                                            +'<div id="bipartite"></div>'
-                                                                            +'<div id="output"></div>');
+                                                   $("#bipartite").empty();
+                                                   //$(".main-content").append('<div id="info"></div>' 
+                                                                            //+'<div id="bipartite"></div>'
+                                                                            //+'<div id="output"></div>');
                                             var sales_data = [];
                                             for(i=1;i<=nbrows;i++){
                                                 var tempp = [];
@@ -245,6 +245,12 @@
 	}
 	
 	function drawEdges(data, id){
+                d3.select(".button") .on("click",function(d){
+                             dialog.dialog( "open" );
+                             $("#indexBlock").empty();
+                             $("#indexBlock").append('Classic3: Co-clustering');
+                             //alert( d.key1);alert( d.key2);})
+                         });
 		d3.select("#"+id).append("g").attr("class","edges").attr("transform","translate("+ b+",0)");
                 console.log(data);
 		d3.select("#"+id).select(".edges").selectAll(".edge")
@@ -333,7 +339,7 @@
 	}
 	
 	bP.draw = function(data, svg){
-                      $(".main-content").append('<div id="dialog-form" title="Bi-cluster Co-clustering">'
+                      $(".main-content").append('<div id="dialog-form" title="Restart Co-clustering">'
                                                                      +'<p id="indexBlock"></p>'
                                                                      +'<form>'
                                                                      +'<fieldset>'
@@ -402,9 +408,40 @@
                                                                         d3.select("#tooltip").classed("hidden", false);
                                                                          return bP.selectSegment(data, p, i,biP.row_cluster_sizes,biP.col_cluster_sizes,info); })
 					.on("mouseout",function(d, i){   d3.select(this).classed("cell-hover",false);
-					                                                    $("#info").empty(); 
+					                                                    //$("#info").empty(); 
                                                                          d3.select("#tooltip").classed("hidden", true);
-                                                                         return bP.deSelectSegment(data, p, i,biP.row_cluster_sizes,biP.col_cluster_sizes,info); });	
+                                                                         return bP.deSelectSegment(data, p, i,biP.row_cluster_sizes,biP.col_cluster_sizes,info); });
+                        });
+                       [0,1].forEach(function(p){			
+				d3.select("#"+biP.id)
+					.select(".part"+p)
+					.select(".mainbars")
+					.selectAll(".mainbar")
+					.on("click",function(d, i){ 
+                                            var indexRow = parseInt(d3.select(this).select(".barlabel").text());
+                                            var indexCol = parseInt(d3.select(this).select(".barlabel").text());
+                                            $("#info").empty(); 
+                                            $("#info").append('<div id="graphHolder"></div>' 
+                                                             +'<div id="toolbox">'
+                                                             +'<p><input id="hide_checkbox" type="checkbox" onClick="hide('+(indexRow-1)+','+(indexCol-1)+')"/>Hide unrelated words</p>'
+                                                             +'<div id="sliderContainer">'
+                                                             +'Filter by similarity level: <span id="similarity"></span>'
+                                                             +'<div id="slider"></div>'
+                                                             +'</div>'
+                                                             +'<p id="hint"></p>'
+                                                             +'<div id="language_information"></div>'
+                                                             +'</div>');
+                                            $(function() {
+                                            	$("#chartSelector").buttonset();
+                                                $("#chartSelector").change(function(event){
+                                                	chartChange($("input[type=radio]:checked").val(),indexRow-1,indexCol-1);
+              					});
+              			            restart(indexRow-1,indexCol-1);
+              				    $("#slider").slider({ change: function( event, ui ) {similarityThreshold = ui.value;restart(indexRow-1,indexCol-1);}, min: similarityThresholdMin, max: similarityThresholdMax, value: similarityThreshold });
+                                           });
+                                            
+                                       });
+                                                                        	
 			});
 		});	
 	}
