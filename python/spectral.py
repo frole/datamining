@@ -260,7 +260,10 @@ def testSpectral(corpus,nbrows,nbcols) :
         nodes_cluster_info.append(l)
 
         # Links
-        sim = m.T * m
+        mT=m.T  # mT= term-doc matrix
+        mT_norm = normalize(mT, axis=1)
+        m_norm = normalize(m, axis=0)
+        sim= mT_norm * m_norm
         l=[]
         for w in best_words :
             for w2 in best_words :
